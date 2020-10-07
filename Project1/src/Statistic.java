@@ -3,7 +3,7 @@ import java.util.*;
 public class Statistic {
 
     public static void main(String[] args) {
-        PriorityQueue<Tree.Node> statistics = statistics(new char[]{'a', 'b', 'b', 'c', 'd', 'd', 'd', 'd','e','f'});
+        PriorityQueue<Tree.Node> statistics = statistics(new Character[]{'a', 'b', 'b', 'c', 'd', 'd', 'd', 'd', 'e', 'f'});
     }
 
     /**
@@ -16,7 +16,8 @@ public class Statistic {
      * 由于HashMap本身无序，逐个放入PriorityQueue排序，排序方式耦合在Node的定义中
      * 树的构建则将根据PriorityQueue<Node>进行
      */
-    public static PriorityQueue<Tree.Node> statistics(char[] charArray) {
+    public static PriorityQueue<Tree.Node> statistics(Character[] charArray) {
+        if (charArray == null || charArray.length == 0) return null;
         long start = System.currentTimeMillis();
         Map<Character, Integer> map = new HashMap<Character, Integer>();
         for (char c : charArray) {
@@ -36,7 +37,7 @@ public class Statistic {
             Tree.Node node = new Tree.Node(character, map.get(character));
             queue.add(node);
         }
-        System.out.println("Statistic size:" + charArray.length);
+        System.out.println("Statistic size:" + charArray.length+",Queue length:"+queue.size());
         System.out.println("Statistic running time:" + (System.currentTimeMillis() - start) + "mills");
         //此处用于打印queue检测排序效果，queue用for循环遍历顺序有问题，必须poll
 //        while(!queue.isEmpty()){
