@@ -19,7 +19,7 @@ public class Compress {
             System.out.println(map);
 
             String outPath = "C:\\Users\\AAA\\Desktop\\DSA仓库\\testcases\\1test.txt";
-            FileUtil.writeFile(outPath, map, bytes);
+            FileUtil.writeFile(outPath, map, bytes,false);
         }
     }
 }

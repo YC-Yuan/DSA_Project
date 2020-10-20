@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class FileUtil {
@@ -17,9 +18,24 @@ public class FileUtil {
         return bytes;
     }
 
+    public static void writeObject(String path,Object object,boolean remain) throws IOException {
+        ShowTime showTime=new ShowTime();
+        OutputStream outputStream;
+        if (remain) outputStream = new FileOutputStream(path, true);
+        else outputStream = new FileOutputStream(path);
+
+        //用对象输出流存储文件头
+        ObjectOutputStream oop = new ObjectOutputStream(outputStream);
+        oop.writeObject(object);
+
+        oop.close();
+        outputStream.close();
+    }
+
     public static void writeFile(String path, HashMap<Byte, String> map, byte[] bytes, boolean remain) throws IOException {
         ShowTime showTime = new ShowTime();
         OutputStream outputStream;
+
         if (remain) outputStream = new FileOutputStream(path, true);
         else outputStream = new FileOutputStream(path);
         BufferedOutputStream out = new BufferedOutputStream(outputStream);
