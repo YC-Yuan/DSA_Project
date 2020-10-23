@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Compress {
-    public static void main(String[] args) throws IOException {
+    /*public static void main(String[] args) throws IOException {
         //根据路径拿到要压缩的文件
         String inPath = "C:\\Users\\AAA\\Desktop\\DSA仓库\\testcases\\testcase02NormalSingleFile\\1.txt";
         //String path = "C:\\Users\\AAA\\Desktop\\DSA仓库\\testcases\\testcase03XLargeSingleFile\\3.csv";
@@ -21,5 +21,5 @@ public class Compress {
             String outPath = "C:\\Users\\AAA\\Desktop\\DSA仓库\\testcases\\1test.txt";
             FileUtil.writeFile(outPath, map, bytes,false);
         }
-    }
+    }*/
 }

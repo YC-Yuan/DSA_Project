@@ -6,7 +6,7 @@ import java.util.*;
 
 public class Statistic {
 
-    public static void main(String[] args) throws IOException {
+/*    public static void main(String[] args) throws IOException {
         //根据路径拿到要压缩的文件
         //String inputFile = "C:\\Users\\AAA\\Desktop\\DSA仓库\\testcases\\testcase02NormalSingleFile\\1.txt";
         String inputFile = "C:\\Users\\AAA\\Desktop\\DSA仓库\\testcases\\testcase03XLargeSingleFile\\1.jpg";
@@ -24,7 +24,7 @@ public class Statistic {
         }
         in.close();
         System.out.println("read running time:" +(System.currentTimeMillis()-startTime));
-    }
+    }*/
 
     /**
      * 1.统计字符频率
