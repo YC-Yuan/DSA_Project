@@ -8,12 +8,12 @@ public class FolderNode implements Serializable {
     public static void main(String[] args) throws IOException {
         ShowTime showTime = new ShowTime();
 
-        FolderNode folderNode = new FolderNode("C:\\Users\\AAA\\Desktop\\DSA仓库\\testcases");
+        FolderNode folderNode = new FolderNode("C:\\Users\\15344\\Desktop\\辩论");
         folderNode.print();
         showTime.printTime("Read folders cost:");
         showTime.updateTime();
 
-        folderNode.compress("C:\\Users\\AAA\\Desktop\\DSA仓库\\testfile.yyc");
+        folderNode.compress("C:\\Users\\15344\\Desktop\\testfile.yyc");
         showTime.printTime("Compress all cost:");
     }
 
@@ -31,7 +31,8 @@ public class FolderNode implements Serializable {
                 String fileName = f.getName();//获取文件或目录名
                 if (!f.isDirectory()) {//是文件
                     files.add(new FileNode(path + "\\" + fileName));
-                } else {//是文件夹
+                }
+                else {//是文件夹
                     folders.add(new FolderNode(path + "\\" + fileName));
                 }
             }
@@ -60,15 +61,13 @@ public class FolderNode implements Serializable {
 
     private void writeFile(String desPath) throws IOException {
         WriteUtil writeUtil = new WriteUtil(desPath);
-        for (FileNode file:files
-             ) {
-            System.out.println("Compressing:"+file.path);
+        for (FileNode file : files) {
+            System.out.println("Compressing:" + file.path);
             writeUtil.compress(file.path);
         }
-        for (FolderNode fd:folders
-             ) {
+        for (FolderNode fd : folders) {
             System.out.println("writeFold evoked:" + fd.path);
-            writeUtil.writeFolders(fd);
+            fd.writeFile(desPath);
         }
     }
 }
