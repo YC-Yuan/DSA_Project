@@ -1,11 +1,8 @@
-import java.util.ArrayList;
-
 public class Utils {
-    public static byte[] getByteArray(ArrayList<Byte> byteArrayList){
-        byte[] bytes=new byte[byteArrayList.size()];
-        for (int i=0;i<byteArrayList.size();i++){
-            bytes[i]=byteArrayList.get(i);
-        }
-        return bytes;
+    public static String rootPath="";
+
+    public static String getDirName(String path){
+        String[] names=path.split("\\\\");
+        return names[names.length-1];
     }
 }

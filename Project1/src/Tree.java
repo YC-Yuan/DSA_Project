@@ -43,9 +43,7 @@ public class Tree implements Serializable {
 
     //递归函数，作为使用树的工具
     private static void useLeaf(Node leaf, HashMap<Byte, String> map) {
-        //System.out.println("node.c = " + leaf.c);
         if (leaf.isLeaf()) {
-            //System.out.println("leaf using c:" + leaf.c + " f:" + leaf.f);
             map.put(leaf.c, leaf.getCode());
         } else {
             useLeaf(leaf.left, map);
@@ -71,14 +69,12 @@ public class Tree implements Serializable {
         }
 
         public String getCode() {
-            //System.out.println("getCode running");
             Node node = this;
             StringBuilder code = new StringBuilder();
             while (!node.isRoot()) {
                 code.insert(0, (node.isLeftChild() ? "0" : "1"));
                 node = node.parent;
             }
-            //System.out.println("code = " + code);
             return code.toString();
         }
 

@@ -1,73 +1,69 @@
-import com.sun.xml.internal.ws.api.model.SEIModel;
-import org.junit.Test;
-
 import java.io.*;
 import java.util.ArrayList;
 
 public class FolderNode implements Serializable {
-    public static void main(String[] args) throws IOException {
-        ShowTime showTime = new ShowTime();
+    public FolderNode[] folders;
+    public FileNode[] files;
+    public String name;
 
-        FolderNode folderNode = new FolderNode("C:\\Users\\15344\\Desktop\\辩论");
-        folderNode.print();
-        showTime.printTime("Read folders cost:");
-        showTime.updateTime();
-
-        folderNode.compress("C:\\Users\\15344\\Desktop\\testfile.yyc");
-        showTime.printTime("Compress all cost:");
-    }
-
-    public ArrayList<FolderNode> folders = new ArrayList<>();
-    public ArrayList<FileNode> files = new ArrayList<>();
-    public String path;
-
-    //根据地址读入
+    //根据地址读入文件夹
     public FolderNode(String path) {
-        this.path = path;
+        if (Utils.rootPath.equals("")) Utils.rootPath = path;
+        this.name = Utils.getDirName(path);
+
+        ArrayList<FolderNode> folders=new ArrayList<>();
+        ArrayList<FileNode> files=new ArrayList<>();
+
+
         File file = new File(path);
         File[] fs = file.listFiles();//遍历path下的文件和目录，放在File数组中
         if (fs != null) {
             for (File f : fs) {
                 String fileName = f.getName();//获取文件或目录名
                 if (!f.isDirectory()) {//是文件
-                    files.add(new FileNode(path + "\\" + fileName));
-                }
-                else {//是文件夹
+                    files.add(new FileNode(fileName));
+                } else {//是文件夹
                     folders.add(new FolderNode(path + "\\" + fileName));
                 }
             }
         }
+        this.files=files.toArray(new FileNode[0]);
+        this.folders=folders.toArray(new FolderNode[0]);
     }
 
     //按照储存顺序print
     public void print() {
-        System.out.println("Folder:" + path);
-        for (FolderNode folder : folders
-        ) {
-            folder.print();
-        }
-        for (FileNode file : files
-        ) {
-            System.out.println("File:" + file.path);
-        }
+        System.out.println("Folder:" + name);
+        for (FolderNode folder : folders) folder.print();
+        for (FileNode file : files) System.out.println("File:" + file.name);
+
     }
 
     //压缩区
     //按照储存顺序(先文件，后文件夹)写入文件
-    public void compress(String desPath) throws IOException {
-        new WriteUtil(desPath).writeFolders(this);
-        writeFile(desPath);
+    //rootPath为此文件/文件夹所在的绝对路径
+    public void compress(String desPath, String rootPath) throws IOException {
+        new Compress(desPath).writeFolders(this);
+        writeFile(desPath, rootPath);
     }
 
-    private void writeFile(String desPath) throws IOException {
-        WriteUtil writeUtil = new WriteUtil(desPath);
+    private void writeFile(String desPath, String rootPath) throws IOException {
+        Compress compress = new Compress(desPath);
         for (FileNode file : files) {
-            System.out.println("Compressing:" + file.path);
-            writeUtil.compress(file.path);
+            System.out.println("Compressing:" + file.name);
+            compress.compress(file, rootPath);
         }
         for (FolderNode fd : folders) {
-            System.out.println("writeFold evoked:" + fd.path);
-            fd.writeFile(desPath);
+            System.out.println("writeFold evoked:" + rootPath + "\\" + fd.name);
+            fd.writeFile(desPath, rootPath + "\\" + fd.name);
         }
+    }
+
+    //解压区
+    public void creatPath(String dir) {
+        File file = new File(dir);
+        if (file.mkdirs())
+            System.out.println("Make dirs for:" + name + " Success!");
+        else System.out.println("Make dirs for:" + name + " Fail! It may already existed.");
     }
 }

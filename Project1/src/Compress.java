@@ -1,25 +1,77 @@
 import java.io.*;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Compress {
-    /*public static void main(String[] args) throws IOException {
-        //根据路径拿到要压缩的文件
-        String inPath = "C:\\Users\\AAA\\Desktop\\DSA仓库\\testcases\\testcase02NormalSingleFile\\1.txt";
-        //String path = "C:\\Users\\AAA\\Desktop\\DSA仓库\\testcases\\testcase03XLargeSingleFile\\3.csv";
-        //String path="C:\\Users\\AAA\\Desktop\\DSA仓库\\testcases\\testcase01EmptyFile\\empty.txt";
+    public String desPath;
 
-        byte[] bytes = FileUtil.readFile(inPath);
-        if (bytes.length == 0) {
-            //空文件
-            System.out.println("Empty file");
-        } else {
-            //统计次数、构建huffman tree、构建编码字典（封装在了tree中）
-            HashMap<Byte, String> map = Tree.getMap(bytes);
-            System.out.println(map);
-
-            String outPath = "C:\\Users\\AAA\\Desktop\\DSA仓库\\testcases\\1test.txt";
-            FileUtil.writeFile(outPath, map, bytes,false);
+    public Compress(String desPath) throws IOException {
+        this.desPath = desPath;
+        File file = new File(desPath);
+        if (!file.exists()) {
+            if (file.createNewFile()) System.out.println("Create file successful:"+file.getPath());
         }
-    }*/
+    }
+
+    public void writeFolders(FolderNode folderNode) throws IOException {
+        OutputStream ops = new FileOutputStream(desPath, true);
+
+        ObjectOutputStream oop = new ObjectOutputStream(ops);
+        oop.writeObject(folderNode);
+        oop.close();
+        ops.close();
+    }
+
+    //输入要压缩进去的文件，往desPath;rootPath为文件所在目录
+    public void compress(FileNode fileNode,String rootPath) throws IOException {
+        ShowTime showTime = new ShowTime();
+
+        //读取部分
+        BufferedInputStream in = new BufferedInputStream(new FileInputStream(rootPath+"\\"+fileNode.name));
+        int inSize = in.available();
+        System.out.println("file size= " + inSize);
+        fileNode.size=inSize;
+        //遍历文件夹中所有内容
+        byte[] bytes = new byte[inSize];
+        for (int i = 0; i < inSize; i++) {
+            bytes[i] = (byte) in.read();
+        }
+        in.close();
+
+        //写入部分
+        HashMap<Byte, String> map = Tree.getMap(bytes);
+
+        //压缩时只能选择存在的目录，所以创建文件就够了
+        OutputStream ops = new FileOutputStream(desPath, true);
+
+        ObjectOutputStream oop = new ObjectOutputStream(ops);
+        BufferedOutputStream bos = new BufferedOutputStream(ops);
+
+        oop.writeObject(map);
+        oop.writeObject(fileNode);
+        //存储文件内容
+        StringBuilder strBuilder = new StringBuilder();
+        String str;
+        for (Byte b : bytes) {
+            //使用缓冲区，攒够8位编码则写入
+            str = map.get(b);
+            strBuilder.append(str);
+            while (strBuilder.length() >= 8) {
+                str = strBuilder.substring(0, 8);
+                strBuilder.delete(0, 8);
+                bos.write((byte) Integer.parseInt(str, 2));
+            }
+        }
+        //最后可能会剩下一些，补0处理
+        if (strBuilder.length() != 0) {
+            while (strBuilder.length() < 8) {
+                strBuilder.append("0");
+            }
+            bos.write((byte) Integer.parseInt(strBuilder.toString(), 2));
+        }
+        bos.flush();
+        ops.close();
+        oop.close();
+        bos.close();
+        showTime.printTime("Compress " + rootPath+"\\"+fileNode.name + " cost:");
+    }
 }

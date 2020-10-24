@@ -5,27 +5,6 @@ import java.io.InputStream;
 import java.util.*;
 
 public class Statistic {
-
-/*    public static void main(String[] args) throws IOException {
-        //根据路径拿到要压缩的文件
-        //String inputFile = "C:\\Users\\AAA\\Desktop\\DSA仓库\\testcases\\testcase02NormalSingleFile\\1.txt";
-        String inputFile = "C:\\Users\\AAA\\Desktop\\DSA仓库\\testcases\\testcase03XLargeSingleFile\\1.jpg";
-        //String inputFile="C:\\Users\\AAA\\Desktop\\DSA仓库\\testcases\\testcase01EmptyFile\\empty.txt";
-        BufferedInputStream in=new BufferedInputStream(new FileInputStream(inputFile));
-
-        int inSize=in.available();
-        System.out.println("inputFile.length() = " + inSize);
-
-        //遍历文件夹中所有内容
-        long startTime=System.currentTimeMillis();
-        byte[] bytes=new byte[inSize];
-        for(int i=0;i<inSize;i++){
-            bytes[i]=(byte)in.read();
-        }
-        in.close();
-        System.out.println("read running time:" +(System.currentTimeMillis()-startTime));
-    }*/
-
     /**
      * 1.统计字符频率
      * 输入byte[]，用HashMap(key为字符,value为频率)存储字符出现频率，因为需要根据字符内容查询频率
