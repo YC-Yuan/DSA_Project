@@ -7,41 +7,26 @@ public class test {
 
     @Test
     public void fileCompressTest() throws IOException {
-        String desPath = "C:\\Users\\AAA\\Desktop\\DSA仓库\\singleFile.yyc";
+        String desPath = "C:\\Users\\15344\\Desktop\\DSA仓库\\singleFile.yyc";
         Compress compress = new Compress(desPath);
         FileNode fn = new FileNode("small.txt");
-        compress.compress(fn, "C:\\Users\\AAA\\Desktop\\DSA仓库");
+        compress.compress(fn, "C:\\Users\\15344\\Desktop\\DSA仓库");
     }
 
     @Test
     public void fileDepressTest() throws IOException, ClassNotFoundException {
-        FileInputStream fis = new FileInputStream("C:\\Users\\AAA\\Desktop\\DSA仓库\\singleFile.yyc");
-        ObjectInputStream ois = new ObjectInputStream(fis);
-        BufferedInputStream bis = new BufferedInputStream(ois);
-
-        HashMap<Byte, String> oldMap = (HashMap<Byte, String>) ois.readObject();
-        FileNode fn = (FileNode) ois.readObject();
-
-        HashMap<String, Byte> map = new HashMap<>();
-
-        for (Byte key : oldMap.keySet()) {
-            map.put(oldMap.get(key), key);
-        }
-
-        System.out.println(fn.name + " " + fn.size);
-        System.out.println(map);
-
-        //开始还原文件
-        FileOutputStream fos = new FileOutputStream("C:\\Users\\AAA\\Desktop\\DSA仓库\\deSingleFile.txt");
-        BufferedOutputStream bos = new BufferedOutputStream(fos);
+        FileNode fn = new FileNode("depressedFile.txt");
+        FileInputStream is = new FileInputStream("C:\\Users\\15344\\Desktop\\DSA仓库\\singleFile.yyc");
+        fn.decompressFile("C:\\Users\\15344\\Desktop\\DSA仓库",is);
+        is.close();
     }
 
     @Test
     public void folderCompress() throws IOException {
         ShowTime showTime=new ShowTime();
 
-        String compressPath = "C:\\Users\\AAA\\Desktop\\DSA仓库\\testcases\\testcase02NormalSingleFile";
-        String desPath = "C:\\Users\\AAA\\Desktop\\DSA仓库\\testfile.yyc";
+        String compressPath = "C:\\Users\\15344\\Desktop\\DSA仓库\\testcases\\testcase02NormalSingleFile";
+        String desPath = "C:\\Users\\15344\\Desktop\\DSA仓库\\testfile.yyc";
 
         FolderNode folderNode = new FolderNode(compressPath);
         folderNode.print();
@@ -55,7 +40,7 @@ public class test {
     public void folderDecompress() throws IOException, ClassNotFoundException {
         ShowTime showTime = new ShowTime();
 
-        Decompress decompress = new Decompress("C:\\Users\\AAA\\Desktop\\DSA仓库\\testfile.yyc", "C:\\Users\\AAA\\Desktop\\DSA仓库\\decompress");
+        Decompress decompress = new Decompress("C:\\Users\\15344\\Desktop\\DSA仓库\\testfile.yyc", "C:\\Users\\15344\\Desktop\\DSA仓库\\decompress");
         decompress.decompress();
 
         showTime.printTime("Decompress all cost:");
