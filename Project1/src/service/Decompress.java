@@ -1,3 +1,5 @@
+package service;
+
 import java.io.*;
 
 public class Decompress {
@@ -22,7 +24,7 @@ public class Decompress {
     }
 
     //以先文件后文件夹的顺序遍历复原
-    private void folderDecompress(FolderNode fn,String dir,FileInputStream fis) throws IOException, ClassNotFoundException {
+    private void folderDecompress(FolderNode fn, String dir, FileInputStream fis) throws IOException, ClassNotFoundException {
         for (FileNode fileNode:fn.files) {
             //传入地址，读文件并创造
             System.out.println("creating file:"+fileNode.name);

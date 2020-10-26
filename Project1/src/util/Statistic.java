@@ -1,7 +1,5 @@
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+package util;
+
 import java.util.*;
 
 public class Statistic {
@@ -17,7 +15,6 @@ public class Statistic {
      */
     public static PriorityQueue<Tree.Node> statistics(byte[] bytes) {
         if (bytes == null || bytes.length == 0) return null;
-        long start = System.currentTimeMillis();
         Map<Byte, Integer> map = new HashMap<Byte, Integer>();
         for (byte b : bytes) {
             Byte aByte = b;
@@ -36,13 +33,7 @@ public class Statistic {
             Tree.Node node = new Tree.Node(b, map.get(b));
             queue.add(node);
         }
-        System.out.println("Statistic size:" + bytes.length + ",Queue length:" + queue.size());
-        System.out.println("Statistic running time:" + (System.currentTimeMillis() - start) + "mills");
-        //此处用于打印queue检测排序效果，queue用for循环遍历顺序有问题，必须poll
-//        while(!queue.isEmpty()){
-//            Tree.Node node = queue.poll();
-//            System.out.println("queue.poll() c:"+node.getC()+" f:"+node.getF());
-//        }
+
         return queue;
     }
 }

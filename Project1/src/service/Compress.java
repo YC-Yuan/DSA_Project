@@ -1,3 +1,8 @@
+package service;
+
+import util.ShowTime;
+import util.Tree;
+
 import java.io.*;
 import java.util.HashMap;
 
@@ -23,14 +28,14 @@ public class Compress {
 
     //输入要压缩进去的文件，往desPath;rootPath为文件所在目录
     //压缩顺序：map、node、byte数组
-    public void compress(FileNode fileNode,String rootPath) throws IOException {
+    public void compress(FileNode fileNode, String rootPath) throws IOException {
         ShowTime showTime = new ShowTime();
 
         //读取部分
         BufferedInputStream bis = new BufferedInputStream(new FileInputStream(rootPath+"\\"+fileNode.name));
         int inSize = bis.available();
         System.out.println("file size= " + inSize);
-        fileNode.size=inSize;
+        fileNode.oriSize=inSize;
         //遍历文件夹中所有内容
         byte[] bytes = new byte[inSize];
         for (int i = 0; i < inSize; i++) {
@@ -72,6 +77,6 @@ public class Compress {
         }
         bos.flush();
         bos.close();
-        showTime.printTime("Compress " + rootPath+"\\"+fileNode.name + " cost:");
+        showTime.printTime("Function.Compress " + rootPath+"\\"+fileNode.name + " cost:");
     }
 }

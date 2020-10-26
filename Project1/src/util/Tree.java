@@ -1,3 +1,5 @@
+package util;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.PriorityQueue;
@@ -10,9 +12,13 @@ public class Tree implements Serializable {
         return Tree.useTree(Tree.buildTree(Statistic.statistics(bytes)));
     }
 
+    //封装，给出树
+    public static Tree getTree(byte[] bytes){
+        return Tree.buildTree(Statistic.statistics(bytes));
+    }
+
     //根据统计结果种树
     public static Tree buildTree(PriorityQueue<Tree.Node> queue) {
-        long start = System.currentTimeMillis();
         if (queue == null) return null;
         while (queue.size() >= 2) {
             Node nodeLeft = queue.poll();
@@ -27,17 +33,14 @@ public class Tree implements Serializable {
         }
         Tree tree = new Tree();
         tree.root = queue.poll();
-        System.out.println("buildTree running time:" + (System.currentTimeMillis() - start) + "mills");
         return tree;
     }
 
     //将树转换成HashMap
     public static HashMap<Byte, String> useTree(Tree tree) {
-        long start = System.currentTimeMillis();
         if (tree == null) return new HashMap<>();
         HashMap<Byte, String> map = new HashMap<>();
         useLeaf(tree.root, map);
-        System.out.println("useTree running time:" + (System.currentTimeMillis() - start) + "mills");
         return map;
     }
 
