@@ -18,10 +18,11 @@ public class Decompress {
         FolderNode fn = (FolderNode) ois.readObject();
         fn.creatPath(desPath+"\\"+fn.name);
         folderDecompress(fn,desPath+"\\"+fn.name,fis);
+        fis.close();
     }
 
     //以先文件后文件夹的顺序遍历复原
-    private void folderDecompress(FolderNode fn,String dir,FileInputStream fis) throws IOException {
+    private void folderDecompress(FolderNode fn,String dir,FileInputStream fis) throws IOException, ClassNotFoundException {
         for (FileNode fileNode:fn.files) {
             //传入地址，读文件并创造
             System.out.println("creating file:"+fileNode.name);

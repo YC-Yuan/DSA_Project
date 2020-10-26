@@ -22,29 +22,31 @@ public class Compress {
     }
 
     //输入要压缩进去的文件，往desPath;rootPath为文件所在目录
+    //压缩顺序：map、node、byte数组
     public void compress(FileNode fileNode,String rootPath) throws IOException {
         ShowTime showTime = new ShowTime();
 
         //读取部分
-        BufferedInputStream in = new BufferedInputStream(new FileInputStream(rootPath+"\\"+fileNode.name));
-        int inSize = in.available();
+        BufferedInputStream bis = new BufferedInputStream(new FileInputStream(rootPath+"\\"+fileNode.name));
+        int inSize = bis.available();
         System.out.println("file size= " + inSize);
         fileNode.size=inSize;
         //遍历文件夹中所有内容
         byte[] bytes = new byte[inSize];
         for (int i = 0; i < inSize; i++) {
-            bytes[i] = (byte) in.read();
+            bytes[i] = (byte) bis.read();
         }
-        in.close();
+        bis.close();
 
         //写入部分
         HashMap<Byte, String> map = Tree.getMap(bytes);
+        System.out.println(map);
 
         //压缩时只能选择存在的目录，所以创建文件就够了
         OutputStream ops = new FileOutputStream(desPath, true);
 
         ObjectOutputStream oop = new ObjectOutputStream(ops);
-        BufferedOutputStream bos = new BufferedOutputStream(ops);
+        BufferedOutputStream bos = new BufferedOutputStream(oop);
 
         oop.writeObject(map);
         oop.writeObject(fileNode);
@@ -69,8 +71,6 @@ public class Compress {
             bos.write((byte) Integer.parseInt(strBuilder.toString(), 2));
         }
         bos.flush();
-        ops.close();
-        oop.close();
         bos.close();
         showTime.printTime("Compress " + rootPath+"\\"+fileNode.name + " cost:");
     }
