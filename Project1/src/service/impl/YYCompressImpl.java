@@ -28,12 +28,12 @@ public class YYCompressImpl implements YYCompress {
 
     @Override
     public void fileCompress(String filePath) throws IOException {
-        ShowTime showTime = new ShowTime();
+        //ShowTime showTime = new ShowTime();
 
         //读取部分
         BufferedInputStream bis = new BufferedInputStream(new FileInputStream(filePath));
         int inSize = bis.available();
-        System.out.println("file size= " + inSize);
+        //System.out.println("file size= " + inSize);
 
         //创建将要储存的FileNode
         FileNode fileNode = new FileNode(Utils.getFolderName(filePath));
@@ -88,7 +88,7 @@ public class YYCompressImpl implements YYCompress {
         oop.writeObject(byteFinal);
 
         oop.close();
-        showTime.printTime("Function.Compress " + filePath + "\\" + fileNode.name + " cost:");
+        //showTime.printTime("Function.Compress " + filePath + "\\" + fileNode.name + " cost:");
     }
 
     @Override
