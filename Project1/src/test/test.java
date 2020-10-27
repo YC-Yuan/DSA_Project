@@ -20,8 +20,8 @@ public class test {
 
     @Test
     public void depress() throws IOException, ClassNotFoundException {
-        YYCompress depress = new YYCompressImpl("C:\\Users\\AAA\\Desktop\\DSA仓库");
-        depress.depress("C:\\Users\\AAA\\Desktop\\DSA仓库\\1.YYCFile");
+        YYCompress depress = new YYCompressImpl("C:\\Users\\AAA\\Desktop\\DSA仓库\\depress");
+        depress.depress("C:\\Users\\AAA\\Desktop\\DSA仓库\\testcases.YYCPack");
     }
 
     @Test

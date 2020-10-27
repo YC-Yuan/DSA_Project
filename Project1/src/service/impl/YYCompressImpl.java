@@ -96,7 +96,7 @@ public class YYCompressImpl implements YYCompress {
         oos.writeObject(tree);
         oos.writeObject(fileNode);
         oos.writeObject(byteFinal);
-
+        oos.reset();
         showTime.printTime("Compress "+fileNode.name+",speed:"+fileNode.oriSize/1024.0/1024.0/(showTime.getTime()/1000.0)+ "MB/S,size:"+fileNode.oriSize+"cost:");
     }
 
