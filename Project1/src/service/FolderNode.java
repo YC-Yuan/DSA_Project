@@ -39,6 +39,7 @@ public class FolderNode implements Serializable {
         this.parent = parent;
     }
 
+    //向上追溯到父文件夹,包含自己
     public String getPath() {
         FolderNode currentFolder = this;
         StringBuilder path = new StringBuilder(this.name);
@@ -54,34 +55,5 @@ public class FolderNode implements Serializable {
         System.out.println("Folder:" + name);
         for (FolderNode folder : folders) folder.print();
         for (FileNode file : files) System.out.println("File:" + file.name);
-
-    }
-
-    //压缩区
-    //按照储存顺序(先文件，后文件夹)写入文件
-    //rootPath为此文件/文件夹所在的绝对路径
-    public void compress(String desPath, String rootPath) throws IOException {
-        new Compress(desPath).writeFolders(this);
-        writeFile(desPath, rootPath);
-    }
-
-    private void writeFile(String desPath, String rootPath) throws IOException {
-        Compress compress = new Compress(desPath);
-        for (FileNode file : files) {
-            System.out.println("Compressing:" + file.name);
-            compress.compress(file, rootPath);
-        }
-        for (FolderNode fd : folders) {
-            System.out.println("writeFold evoked:" + rootPath + "\\" + fd.name);
-            fd.writeFile(desPath, rootPath + "\\" + fd.name);
-        }
-    }
-
-    //解压区
-    public void creatPath(String dir) {
-        File file = new File(dir);
-        if (file.mkdirs())
-            System.out.println("Make dirs for:" + name + " Success!");
-        else System.out.println("Make dirs for:" + name + " Fail! It may already existed.");
     }
 }

@@ -11,8 +11,8 @@ public class ShowTime {
         start = System.currentTimeMillis();
     }
 
-    public String getTime() {
-        return (System.currentTimeMillis() - start) + "mills";
+    public long getTime() {
+        return (System.currentTimeMillis() - start) ;
     }
 
     public void printTime(String prefix) {

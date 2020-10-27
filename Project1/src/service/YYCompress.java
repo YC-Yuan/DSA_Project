@@ -1,10 +1,8 @@
 package service;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public interface YYCompress {
-    public String destinationPath = null;
 
     public void compress(String originalPath) throws IOException;
 
@@ -12,7 +10,11 @@ public interface YYCompress {
 
     public void folderCompress(String folderPath) throws IOException;
 
-    public void depress(String filePath);
+    public void depress(String originalPath) throws IOException, ClassNotFoundException;
+
+    void fileDepress( String destinationPath) throws IOException, ClassNotFoundException;
+
+    public void folderDepress() throws IOException, ClassNotFoundException;
 
     void createFolder(String folderPath);
 }

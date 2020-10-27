@@ -1,5 +1,6 @@
 package service;
 
+import service.impl.TreeImpl;
 import util.ShowTime;
 import util.Utils;
 
@@ -21,6 +22,7 @@ public class FileNode implements Serializable {
         this.parent = parent;
     }
 
+    //向上追溯到第一个文件夹
     public String getPath() {
         FolderNode currentFolder;
         StringBuilder path = new StringBuilder(this.name);
