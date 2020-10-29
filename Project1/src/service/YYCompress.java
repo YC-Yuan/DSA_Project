@@ -10,11 +10,11 @@ public interface YYCompress {
 
     public void folderCompress(String folderPath) throws IOException;
 
-    public void depress(String originalPath) throws IOException, ClassNotFoundException;
+    public void decompress(String originalPath) throws IOException, ClassNotFoundException;
 
-    void fileDepress( String destinationPath) throws IOException, ClassNotFoundException;
+    public void fileDecompress(String destinationPath) throws IOException, ClassNotFoundException;
 
-    public void folderDepress() throws IOException, ClassNotFoundException;
+    public void folderDecompress() throws IOException, ClassNotFoundException;
 
-    void createFolder(String folderPath);
+    public void createFolder(String folderPath);
 }

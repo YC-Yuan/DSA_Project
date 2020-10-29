@@ -24,7 +24,7 @@ public class YYCompressImpl implements YYCompress {
      */
     @Override
     public void compress(String originalPath) throws IOException {
-        ShowTime showTime = new ShowTime();
+        //ShowTime showTime = new ShowTime();
 
         //判断文件的种类，分发给两种实现
         File originalFile = new File(originalPath);
@@ -45,14 +45,14 @@ public class YYCompressImpl implements YYCompress {
         }
         oos.close();
 
-        Info.timeConsuming = showTime.getTime();
+        //Info.timeConsuming = showTime.getTime();
         File compressedFile = new File(destinationPath);
         Info.compressedSize += compressedFile.length();
     }
 
     @Override
     public void fileCompress(String filePath) throws IOException {
-        //ShowTime showTime = new ShowTime();
+        ShowTime showTime = new ShowTime();
 
         //创建将要储存的FileNode
         FileNode fileNode = new FileNode(Utils.getFolderName(filePath));
@@ -107,7 +107,7 @@ public class YYCompressImpl implements YYCompress {
         oos.reset();
 
         Info.originalSize += inSize;//统计文件长度
-        //showTime.printTime("Compress "+fileNode.name+",speed:"+fileNode.oriSize/1024.0/1024.0/(showTime.getTime()/1000.0)+ "MB/S,size:"+fileNode.oriSize+"cost:");
+        showTime.printTime("Compress "+fileNode.name+",speed:"+fileNode.oriSize/1024.0/1024.0/(showTime.getTime()/1000.0)+ "MB/S,size:"+fileNode.oriSize+"cost:");
     }
 
     /**
@@ -142,7 +142,7 @@ public class YYCompressImpl implements YYCompress {
     }
 
     @Override
-    public void depress(String originalPath) throws IOException, ClassNotFoundException {
+    public void decompress(String originalPath) throws IOException, ClassNotFoundException {
         ShowTime showTime = new ShowTime();
 
         File file = new File(originalPath);
@@ -152,11 +152,11 @@ public class YYCompressImpl implements YYCompress {
             //System.out.println("Depress a file");
 
             //单文件解压需要读取后才知道文件名称，统一传入文件解压得目标地址，在函数内部获取创建文件的总目录
-            fileDepress(destinationPath + "\\");
+            fileDecompress(destinationPath + "\\");
         }
         else if (Utils.getFilePostFix(file.getName()).equals(".YYCPack")) {//文件夹解压
             //System.out.println("Depress a folder");
-            folderDepress();
+            folderDecompress();
         }
         else {//非法文件名
             System.out.println("Wrong postfix, cannot depress!");
@@ -168,7 +168,7 @@ public class YYCompressImpl implements YYCompress {
     }
 
     @Override
-    public void fileDepress(String destinationPath) throws IOException, ClassNotFoundException {
+    public void fileDecompress(String destinationPath) throws IOException, ClassNotFoundException {
         //ShowTime showTime=new ShowTime();
 
         TreeImpl tree = (TreeImpl) ois.readObject();
@@ -202,7 +202,7 @@ public class YYCompressImpl implements YYCompress {
     }
 
     @Override
-    public void folderDepress() throws IOException, ClassNotFoundException {
+    public void folderDecompress() throws IOException, ClassNotFoundException {
         //此时destination为目标路径
         FolderNode folderNode = (FolderNode) ois.readObject();
 
@@ -217,7 +217,7 @@ public class YYCompressImpl implements YYCompress {
             folderQueue.addAll(Arrays.asList(currentFolder.folders));
             for (FileNode file : currentFolder.files) {
                 //这里统一只传入文件要解压的地址，在函数中获取文件名字
-                fileDepress(Utils.getFolderPath(destinationPath + "\\" + file.getPath()));
+                fileDecompress(Utils.getFolderPath(destinationPath + "\\" + file.getPath()));
             }
         }
     }

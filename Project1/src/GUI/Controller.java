@@ -1,5 +1,6 @@
 package GUI;
 
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -9,14 +10,12 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import service.impl.YYCompressImpl;
 import util.Info;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.List;
 
 public class Controller {
     public Button buttonFile;
@@ -46,10 +45,6 @@ public class Controller {
 
     public static final DecimalFormat format = new DecimalFormat("######0.00");
 
-    public String getOriginalPath() {
-        return originalPath;
-    }
-
     @FXML
     public void clickDestination() {
         DirectoryChooser directoryChooser = new DirectoryChooser();
@@ -65,16 +60,13 @@ public class Controller {
         if (originalPath.equals("")) {//未选择压缩对象
             alert.headerTextProperty().set("Choose a file/folder before compress!");
             alert.showAndWait();
-        }
-        else if (destinationPath.equals("")) {//未选择压缩目的地
+        } else if (destinationPath.equals("")) {//未选择压缩目的地
             alert.headerTextProperty().set("Choose a destination before compress!");
             alert.showAndWait();
-        }
-        else {//执行压缩
+        } else {//执行压缩
             Info.init();
-            //显示正在载入，禁用所有按钮
+            //显示正在压缩，禁用所有按钮
             rootPane.setDisable(true);
-            System.out.println("set disable");
             textOriginalSize.setText(defaultOriginalSize + "compressing...");
             textCompressedSize.setText(defaultCompressedSize + "compressing...");
             textRatio.setText(defaultRatio + "compressing...");
@@ -82,7 +74,7 @@ public class Controller {
             textTime.setText(defaultTime + "compressing...");
 
             //在新线程中运行，结束后启用面板、更新内容
-            new Thread(compressTask).start();
+            new Thread(new CompressTask(originalPath, destinationPath)).start();
 
             //重置地址
             originalPath = "";
@@ -97,14 +89,21 @@ public class Controller {
         if (originalPath.equals("")) {//未选择可解压文件
             alert.headerTextProperty().set("Choose a YYCFile/YYCPack before decompress!");
             alert.showAndWait();
-        }
-        else if (destinationPath.equals("")) {
+        } else if (destinationPath.equals("")) {
             alert.headerTextProperty().set("Choose a destination before decompress!");
             alert.showAndWait();
-        }
-        else {//执行压缩
+        } else {//执行压缩
             Info.init();
-            //
+            //显示正在解压，禁用所有按钮
+            rootPane.setDisable(true);
+            textOriginalSize.setText(defaultOriginalSize + "decompressing...");
+            textCompressedSize.setText(defaultCompressedSize + "decompressing...");
+            textRatio.setText(defaultRatio + "decompressing...");
+            textSpeed.setText(defaultSpeed + "decompressing...");
+            textTime.setText(defaultTime + "decompressing...");
+
+            //在新线程中运行，结束后启用面板、更新内容
+            new Thread(new DecompressTask(originalPath, destinationPath)).start();
         }
     }
 
@@ -127,40 +126,66 @@ public class Controller {
     }
 
     //压缩Task，避免UI无响应
-    Task<Void> compressTask = new Task<Void>() {
-        @Override
-        protected void succeeded() {
-            super.succeeded();
-            updateMessage("Succeeded");
-        }
+    class CompressTask extends Task<Void> {
+        private final String originalPath;
+        private final String destinationPath;
 
-        @Override
-        protected void cancelled() {
-            super.cancelled();
-            updateMessage("Cancelled");
-        }
-
-        @Override
-        protected void failed() {
-            super.failed();
-            updateMessage("Failed");
+        CompressTask(String originalPath, String destinationPath) {
+            this.originalPath = originalPath;
+            this.destinationPath = destinationPath;
         }
 
         @Override
         protected Void call() throws Exception {
-            System.out.println("Path:"+originalPath);
-
-            YYCompressImpl yyCompress = new YYCompressImpl(originalPath);
+            YYCompressImpl yyCompress = new YYCompressImpl(destinationPath);
             yyCompress.compress(originalPath);
-            //恢复按钮，更新资讯
-            rootPane.setDisable(false);
 
-            textOriginalSize.setText(defaultOriginalSize + format.format(Info.getOriginalSize()) + "MB");
-            textTime.setText(defaultTime + format.format(Info.getTime()) + "s");
-            textSpeed.setText(defaultSpeed + format.format(Info.getSpeed()) + "MB/s");
-            textCompressedSize.setText(defaultCompressedSize + format.format(Info.getCompressedSize()) + "MB");
-            textRatio.setText(defaultRatio + format.format(Info.getRatio()) + "%");
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    //恢复按钮，更新资讯
+                    rootPane.setDisable(false);
+
+                    textOriginalSize.setText(defaultOriginalSize + format.format(Info.getOriginalSize()) + "MB");
+                    textTime.setText(defaultTime + format.format(Info.getTime()) + "s");
+                    textSpeed.setText(defaultSpeed + format.format(Info.getSpeed()) + "MB/s");
+                    textCompressedSize.setText(defaultCompressedSize + format.format(Info.getCompressedSize()) + "MB");
+                    textRatio.setText(defaultRatio + format.format(Info.getRatio()) + "%");
+                }
+            });
             return null;
         }
-    };
+    }
+
+    class DecompressTask extends Task<Void>{
+        private final String originalPath;
+        private final String destinationPath;
+
+        DecompressTask(String originalPath, String destinationPath) {
+            this.originalPath = originalPath;
+            this.destinationPath = destinationPath;
+        }
+
+        @Override
+        protected Void call() throws Exception {
+            YYCompressImpl yyCompress = new YYCompressImpl(destinationPath);
+            yyCompress.decompress(originalPath);
+
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    //恢复按钮，更新资讯
+                    rootPane.setDisable(false);
+
+                    textOriginalSize.setText(defaultOriginalSize + format.format(Info.getOriginalSize()) + "MB");
+                    textTime.setText(defaultTime + format.format(Info.getTime()) + "s");
+                    textSpeed.setText(defaultSpeed + format.format(Info.getSpeed()) + "MB/s");
+                    textCompressedSize.setText(defaultCompressedSize + format.format(Info.getCompressedSize()) + "MB");
+                    textRatio.setText(defaultRatio + format.format(Info.getRatio()) + "%");
+                }
+            });
+            return null;
+        }
+
+    }
 }
