@@ -7,9 +7,16 @@ import util.ShowTime;
 import util.Utils;
 
 import java.io.*;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 
 public class test {
+    @Test
+    public void test() {
+        DecimalFormat df = new DecimalFormat("######0.00");
+        String format = df.format(1.11111);
+    }
+
     @Test
     public void compress() throws IOException {
         String folderPath = "C:\\Users\\AAA\\Desktop\\DSA仓库\\testcases";
