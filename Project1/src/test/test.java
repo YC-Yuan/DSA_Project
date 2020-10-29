@@ -3,18 +3,12 @@ package test;
 import org.junit.Test;
 import service.*;
 import service.impl.YYCompressImpl;
-import util.ShowTime;
-import util.Utils;
 
 import java.io.*;
-import java.text.DecimalFormat;
-import java.util.Arrays;
 
 public class test {
     @Test
     public void test() {
-        DecimalFormat df = new DecimalFormat("######0.00");
-        String format = df.format(1.11111);
     }
 
     @Test

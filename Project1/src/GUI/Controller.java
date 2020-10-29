@@ -1,5 +1,6 @@
 package GUI;
 
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -34,16 +35,20 @@ public class Controller {
 
     public AnchorPane rootPane;
 
-    private String destinationPath = "";
-    private String originalPath = "";
+    public static String destinationPath = "";
+    public static String originalPath = "";
 
-    private static final String defaultOriginalSize = "Original Size:";
-    private static final String defaultTime = "Time consuming:";
-    private static final String defaultSpeed = "Average Speed:";
-    private static final String defaultCompressedSize = "Compressed Size:";
-    private static final String defaultRatio = "Compression Ratio:";
+    public static final String defaultOriginalSize = "Original Size:";
+    public static final String defaultTime = "Time consuming:";
+    public static final String defaultSpeed = "Average Speed:";
+    public static final String defaultCompressedSize = "Compressed Size:";
+    public static final String defaultRatio = "Compression Ratio:";
 
-    private static final DecimalFormat format = new DecimalFormat("######0.00");
+    public static final DecimalFormat format = new DecimalFormat("######0.00");
+
+    public String getOriginalPath() {
+        return originalPath;
+    }
 
     @FXML
     public void clickDestination() {
@@ -60,29 +65,24 @@ public class Controller {
         if (originalPath.equals("")) {//未选择压缩对象
             alert.headerTextProperty().set("Choose a file/folder before compress!");
             alert.showAndWait();
-        } else if (destinationPath.equals("")) {//未选择压缩目的地
+        }
+        else if (destinationPath.equals("")) {//未选择压缩目的地
             alert.headerTextProperty().set("Choose a destination before compress!");
             alert.showAndWait();
-        } else {//执行压缩
+        }
+        else {//执行压缩
             Info.init();
-            //显示正在载入
+            //显示正在载入，禁用所有按钮
             rootPane.setDisable(true);
             System.out.println("set disable");
-            textOriginalSize.setText(defaultCompressedSize + "Compressing, please wait!");
-            //禁用所有按钮
+            textOriginalSize.setText(defaultOriginalSize + "compressing...");
+            textCompressedSize.setText(defaultCompressedSize + "compressing...");
+            textRatio.setText(defaultRatio + "compressing...");
+            textSpeed.setText(defaultSpeed + "compressing...");
+            textTime.setText(defaultTime + "compressing...");
 
-            YYCompressImpl yyCompress = new YYCompressImpl(destinationPath);
-            yyCompress.compress(originalPath);
-            rootPane.setDisable(false);
-            System.out.println("set able");
-
-            //恢复按钮，更新资讯
-            textOriginalSize.setText(defaultOriginalSize + format.format(Info.getOriginalSize()) + "MB");
-            textTime.setText(defaultTime + format.format(Info.getTime()) + "s");
-            textSpeed.setText(defaultSpeed + format.format(Info.getSpeed()) + "MB/s");
-            textCompressedSize.setText(defaultCompressedSize + format.format(Info.getCompressedSize()) + "MB");
-            textRatio.setText(defaultRatio + format.format(Info.getRatio()) + "%");
-
+            //在新线程中运行，结束后启用面板、更新内容
+            new Thread(compressTask).start();
 
             //重置地址
             originalPath = "";
@@ -97,10 +97,12 @@ public class Controller {
         if (originalPath.equals("")) {//未选择可解压文件
             alert.headerTextProperty().set("Choose a YYCFile/YYCPack before decompress!");
             alert.showAndWait();
-        } else if (destinationPath.equals("")) {
+        }
+        else if (destinationPath.equals("")) {
             alert.headerTextProperty().set("Choose a destination before decompress!");
             alert.showAndWait();
-        } else {//执行压缩
+        }
+        else {//执行压缩
             Info.init();
             //
         }
@@ -123,4 +125,42 @@ public class Controller {
             originalPath = folder.getPath();
         }
     }
+
+    //压缩Task，避免UI无响应
+    Task<Void> compressTask = new Task<Void>() {
+        @Override
+        protected void succeeded() {
+            super.succeeded();
+            updateMessage("Succeeded");
+        }
+
+        @Override
+        protected void cancelled() {
+            super.cancelled();
+            updateMessage("Cancelled");
+        }
+
+        @Override
+        protected void failed() {
+            super.failed();
+            updateMessage("Failed");
+        }
+
+        @Override
+        protected Void call() throws Exception {
+            System.out.println("Path:"+originalPath);
+
+            YYCompressImpl yyCompress = new YYCompressImpl(originalPath);
+            yyCompress.compress(originalPath);
+            //恢复按钮，更新资讯
+            rootPane.setDisable(false);
+
+            textOriginalSize.setText(defaultOriginalSize + format.format(Info.getOriginalSize()) + "MB");
+            textTime.setText(defaultTime + format.format(Info.getTime()) + "s");
+            textSpeed.setText(defaultSpeed + format.format(Info.getSpeed()) + "MB/s");
+            textCompressedSize.setText(defaultCompressedSize + format.format(Info.getCompressedSize()) + "MB");
+            textRatio.setText(defaultRatio + format.format(Info.getRatio()) + "%");
+            return null;
+        }
+    };
 }
