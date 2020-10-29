@@ -9,7 +9,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.Controller">
+<AnchorPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.Controller">
    <children>
       <ImageView fitHeight="408.0" fitWidth="877.0" layoutX="-12.0" layoutY="-4.0">
          <image>
@@ -29,7 +29,7 @@
             </LinearGradient>
          </fill>
       </Text>
-      <Button fx:id="buttonSource" layoutX="67.0" layoutY="281.0" mnemonicParsing="false" onAction="#clickSource" prefHeight="44.0" prefWidth="172.0" text="Choose File/Folder">
+      <Button fx:id="buttonFile" layoutX="67.0" layoutY="281.0" mnemonicParsing="false" onAction="#clickFile" prefHeight="44.0" prefWidth="85.0" text="File">
          <font>
             <Font size="16.0" />
          </font>
@@ -106,5 +106,15 @@
             <Font size="24.0" />
          </font>
       </Text>
+      <Button layoutX="153.0" layoutY="281.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="85.0" text="Folder">
+         <textFill>
+            <LinearGradient cycleMethod="REFLECT" endX="1.0" endY="1.0">
+               <stops>
+                  <Stop color="#865cf2" />
+                  <Stop color="#bf7878" offset="1.0" />
+               </stops>
+            </LinearGradient>
+         </textFill>
+      </Button>
    </children>
 </AnchorPane>
