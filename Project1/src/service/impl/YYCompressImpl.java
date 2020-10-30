@@ -8,6 +8,7 @@ import util.ShowTime;
 import util.Utils;
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class YYCompressImpl implements YYCompress {
@@ -24,15 +25,20 @@ public class YYCompressImpl implements YYCompress {
      */
     @Override
     public void compress(String originalPath) throws IOException {
-        //ShowTime showTime = new ShowTime();
+        ShowTime showTime = new ShowTime();
 
         //判断文件的种类，分发给两种实现
         File originalFile = new File(originalPath);
         if (originalFile.isFile()) {
             //System.out.println("Compress file");
-
-            //压缩文件，根据原文件名修改压缩文件名
-            destinationPath = destinationPath.concat("\\").concat(Utils.getNonFixName(originalFile.getName())).concat(".YYCFile");
+            //检查文件名冲突
+            String targetName = Utils.getNonFixName(originalFile.getName()).concat(".YYCFile");//输出文件名
+            for (File file : Objects.requireNonNull(new File(destinationPath).listFiles())) {//检测目标地址所有文件
+                //如果有重复就修改
+                if (file.getName().equals(targetName)) targetName = Utils.getNonFixName(originalFile.getName()).concat("(1)").concat(".YYCFile");
+            }
+            //目标地址+修改后的输出文件名
+            destinationPath = destinationPath.concat("\\").concat(targetName);
 
             oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(destinationPath)));
             fileCompress(originalPath);
@@ -45,8 +51,8 @@ public class YYCompressImpl implements YYCompress {
         }
         oos.close();
 
-        //Info.timeConsuming = showTime.getTime();
         File compressedFile = new File(destinationPath);
+        Info.timeConsuming = showTime.getTime();
         Info.compressedSize += compressedFile.length();
     }
 
@@ -107,7 +113,7 @@ public class YYCompressImpl implements YYCompress {
         oos.reset();
 
         Info.originalSize += inSize;//统计文件长度
-        showTime.printTime("Compress "+fileNode.name+",speed:"+fileNode.oriSize/1024.0/1024.0/(showTime.getTime()/1000.0)+ "MB/S,size:"+fileNode.oriSize+"cost:");
+        //showTime.printTime("Compress "+fileNode.name+",speed:"+fileNode.oriSize/1024.0/1024.0/(showTime.getTime()/1000.0)+ "MB/S,size:"+fileNode.oriSize+"cost:");
     }
 
     /**
@@ -207,8 +213,15 @@ public class YYCompressImpl implements YYCompress {
         FolderNode folderNode = (FolderNode) ois.readObject();
 
         //遍历folderNode,创建目录并解压文件
-        Queue<FolderNode> folderQueue = new LinkedList<>();
-        folderQueue.add(folderNode);
+
+
+        //对初始文件夹，需要检测名称冲突
+        for (File file : Objects.requireNonNull(new File(destinationPath).listFiles())) {
+            if (file.isDirectory()) if (file.getName().equals(folderNode.name)) folderNode.name += "(1)";
+        }
+        createFolder(destinationPath + "\\" + folderNode.name);
+
+        Queue<FolderNode> folderQueue = new LinkedList<>(Arrays.asList(folderNode.folders));
         FolderNode currentFolder;
         //按照文件夹层数，将文件加载进fileQueue
         while (!folderQueue.isEmpty()) {

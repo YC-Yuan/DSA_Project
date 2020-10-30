@@ -9,6 +9,8 @@ import java.io.*;
 public class test {
     @Test
     public void test() {
+        File file = new File("C:\\Users\\15344\\Desktop\\DSA_Repository\\testcase");
+        System.out.println(file.length());
     }
 
     @Test
