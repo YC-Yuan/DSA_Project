@@ -12,6 +12,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import service.impl.YYCompressImpl;
 import util.Info;
+import util.Utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -89,6 +90,9 @@ public class Controller {
         if (originalPath.equals("")) {//未选择可解压文件
             alert.headerTextProperty().set("Choose a YYCFile/YYCPack before decompress!");
             alert.showAndWait();
+        } else if (!Utils.getFilePostFix(originalPath).equals(".YYCFile") && !Utils.getFilePostFix(originalPath).equals(".YYCPack")) {
+            alert.headerTextProperty().set("Only YYCFile/YYCPack could be decompressed!");
+            alert.showAndWait();
         } else if (destinationPath.equals("")) {
             alert.headerTextProperty().set("Choose a destination before decompress!");
             alert.showAndWait();
@@ -157,7 +161,7 @@ public class Controller {
         }
     }
 
-    class DecompressTask extends Task<Void>{
+    class DecompressTask extends Task<Void> {
         private final String originalPath;
         private final String destinationPath;
 

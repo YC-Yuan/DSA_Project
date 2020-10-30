@@ -156,7 +156,6 @@ public class YYCompressImpl implements YYCompress {
 
         if (Utils.getFilePostFix(file.getName()).equals(".YYCFile")) {//文件解压
             //System.out.println("Depress a file");
-
             //单文件解压需要读取后才知道文件名称，统一传入文件解压得目标地址，在函数内部获取创建文件的总目录
             fileDecompress(destinationPath + "\\");
         }
