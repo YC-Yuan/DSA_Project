@@ -35,15 +35,15 @@ public class YYCompressImpl implements YYCompress {
             String targetName = Utils.getNonFixName(originalFile.getName()).concat(".YYCFile");//输出文件名
             for (File file : Objects.requireNonNull(new File(destinationPath).listFiles())) {//检测目标地址所有文件
                 //如果有重复就修改
-                if (file.getName().equals(targetName)) targetName = Utils.getNonFixName(originalFile.getName()).concat("(1)").concat(".YYCFile");
+                if (file.getName().equals(targetName))
+                    targetName = Utils.getNonFixName(originalFile.getName()).concat("(1)").concat(".YYCFile");
             }
             //目标地址+修改后的输出文件名
             destinationPath = destinationPath.concat("\\").concat(targetName);
 
             oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(destinationPath)));
             fileCompress(originalPath);
-        }
-        else {
+        } else {
             //压缩文件夹，根据文件夹名修改压缩文件名
             destinationPath = destinationPath.concat("\\").concat(originalFile.getName()).concat(".YYCPack");
             oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(destinationPath)));
@@ -74,7 +74,7 @@ public class YYCompressImpl implements YYCompress {
 
         //写入部分
         TreeImpl tree = new TreeImpl(bytes);
-        HashMap<Byte,String> map = tree.useTree();
+        HashMap<Byte, String> map = tree.useTree();
 
         //存储文件内容
         int writeBytesIndex = 0;
@@ -86,8 +86,8 @@ public class YYCompressImpl implements YYCompress {
             str = map.get(b);
             strBuilder.append(str);
             while (strBuilder.length() >= 8) {
-                str = strBuilder.substring(0,8);
-                strBuilder.delete(0,8);
+                str = strBuilder.substring(0, 8);
+                strBuilder.delete(0, 8);
                 writeBytes[writeBytesIndex] = Utils.getByte(str);
                 writeBytesIndex++;
             }
@@ -101,7 +101,7 @@ public class YYCompressImpl implements YYCompress {
             writeBytesIndex++;
         }
         byte[] byteFinal = new byte[writeBytesIndex];//创建最终要写入的数组
-        System.arraycopy(writeBytes,0,byteFinal,0,writeBytesIndex);
+        System.arraycopy(writeBytes, 0, byteFinal, 0, writeBytesIndex);
         //写入数据结构，这里或许写入树更好**
 
         fileNode.comSize = writeBytesIndex;//这里记录压缩后文件长度
@@ -158,12 +158,10 @@ public class YYCompressImpl implements YYCompress {
             //System.out.println("Depress a file");
             //单文件解压需要读取后才知道文件名称，统一传入文件解压得目标地址，在函数内部获取创建文件的总目录
             fileDecompress(destinationPath + "\\");
-        }
-        else if (Utils.getFilePostFix(file.getName()).equals(".YYCPack")) {//文件夹解压
+        } else if (Utils.getFilePostFix(file.getName()).equals(".YYCPack")) {//文件夹解压
             //System.out.println("Depress a folder");
             folderDecompress();
-        }
-        else {//非法文件名
+        } else {//非法文件名
             System.out.println("Wrong postfix, cannot depress!");
         }
         ois.close();
@@ -197,7 +195,7 @@ public class YYCompressImpl implements YYCompress {
                     count++;
                 }
             }
-            stringBuilder.delete(0,8);
+            stringBuilder.delete(0, 8);
         }
         bos.write(wroteBytes);
         bos.close();
@@ -219,6 +217,10 @@ public class YYCompressImpl implements YYCompress {
             if (file.isDirectory()) if (file.getName().equals(folderNode.name)) folderNode.name += "(1)";
         }
         createFolder(destinationPath + "\\" + folderNode.name);
+        for (FileNode file : folderNode.files) {
+            //这里统一只传入文件要解压的地址，在函数中获取文件名字
+            fileDecompress(Utils.getFolderPath(destinationPath + "\\" + file.getPath()));
+        }
 
         Queue<FolderNode> folderQueue = new LinkedList<>(Arrays.asList(folderNode.folders));
         FolderNode currentFolder;

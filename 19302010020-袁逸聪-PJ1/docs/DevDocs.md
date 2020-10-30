@@ -80,22 +80,24 @@ Tree接口规定了Tree类的功能，在TreeImpl中实现树的构建与使用
 
 测试采用了两台电脑：A为台式机，B为轻薄本
 
+WinRAR和HaoZip的测试只在A机上运行
+
 A机配置：Core i7-9700K @ 3.60GHz;16G;500G固态
 
 | 测试样例                     |  大小MB   |压缩速度MB/s|  压缩比% |解压速度MB/s|
 | --------  | -----:  | :----: | :----: | :----: |
-| testcases                   | 3595.83   |   21.44   |   69.45  |   14.77   |
-| testcase05NomalFolder       | $1        |   6       |          |           |
-| testcase07XlargeSubFolders  | $1        |   7       |          |           |
-| testcase08Speed             | $1        |   7       |          |           |
-| testcase09Ratio             | $1        |   7       |          |           |
+| testcases                   | 3594.83   |   21.44   |   69.45  |   14.77   |
+| testcase05NomalFolder       | 5.67      |   17.55   |   75.72  |   10.92   |
+| testcase07XlargeSubFolders  | 1049.01   |   22.97   |   63.52  |   16.55   |
+| testcase08Speed             | 613.61    |   23.27   |   63.99  |   14.09   |
+| testcase09 Ratio            | 421.31    |   21.12   |   62.71  |   16.61   |
 
 B机配置：Core i7-8550U 1.80GHz;16G;512G固态
 
 | 测试样例                     |    大小   |  压缩速度  |  压缩比  |  解压速度  |
 | --------  | -----:  | :----: | :----: | :----: |
-| testcases                   | $1        |   5       |          |           |
-| testcase05NomalFolder       | $1        |   6       |          |           |
-| testcase07XlargeSubFolders  | $1        |   7       |          |           |
+| testcases                   | 3594.83   |   11.58   |  69.45   |   4.95    |
+| testcase05NomalFolder       | 5.67      |   11.62   |  75.72   |   9.51    |
+| testcase07XlargeSubFolders  | 1049.01   |   12.85   |  63.52   |   8.06    |
 | testcase08Speed             | $1        |   7       |          |           |
 | testcase09Ratio             | $1        |   7       |          |           |
