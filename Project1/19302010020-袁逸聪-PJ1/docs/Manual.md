@@ -1,4 +1,4 @@
-# YYCompression
+# YYCompression Manual
 
 具有无损压缩、解压功能，可压缩文件或文件夹
 

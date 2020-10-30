@@ -82,15 +82,15 @@ Tree接口规定了Tree类的功能，在TreeImpl中实现树的构建与使用
 
 WinRAR和HaoZip的测试只在A机上运行
 
-A机配置：Core i7-9700K @ 3.60GHz;16G;500G固态
+A机配置：Core i7-9700K 3.60GHz;16G;500G固态
 
-| 测试样例                     |  大小MB   |压缩速度MB/s|  压缩比% |解压速度MB/s|
-| --------  | -----:  | :----: | :----: | :----: |
-| testcases                   | 3594.83   |   21.44   |   69.45  |   14.77   |
-| testcase05NomalFolder       | 5.67      |   17.55   |   75.72  |   10.92   |
-| testcase07XlargeSubFolders  | 1049.01   |   22.97   |   63.52  |   16.55   |
-| testcase08Speed             | 613.61    |   23.27   |   63.99  |   14.09   |
-| testcase09 Ratio            | 421.31    |   21.12   |   62.71  |   16.61   |
+| 测试样例                     |  大小MB   |压缩速度MB/s|  WinRAR  |  HaoZip  |  压缩比% |  WinRAR  |  HaoZip  |解压速度MB/s|  WinRAR  |  HaoZip  |
+| --------  | -----:  | :----: | :----: | :----: | :----: | :----: | :----: | :----: | :----: | :----: |
+| testcases                   | 3594.83   |   21.44   |  19.97   |  111.4   |   69.45  |    22    |    27    |   14.77   |  299.50  |  114.5   |
+| testcase05NomalFolder       | 5.67      |   17.55   | 太快看不清| 太快看不清|   75.72  |    36    |    38    |   10.92   | 太快看不清| 太快看不清|
+| testcase07XlargeSubFolders  | 1049.01   |   22.97   |  21.85   |  99.9    |   63.52  |    11    |    17    |   16.55   |  349.67  |  271.2   |
+| testcase08Speed             | 613.61    |   23.27   |  30.68   |  73.0    |   63.99  |    7     |    12    |   14.09   |  大概500  |  458.1   |
+| testcase09Ratio             | 421.31    |   21.12   |  16.20   |  40.5    |   62.71  |    16    |    23    |   16.61   |  400不到  |  288.5   |
 
 B机配置：Core i7-8550U 1.80GHz;16G;512G固态
 
@@ -99,5 +99,53 @@ B机配置：Core i7-8550U 1.80GHz;16G;512G固态
 | testcases                   | 3594.83   |   11.58   |  69.45   |   4.95    |
 | testcase05NomalFolder       | 5.67      |   11.62   |  75.72   |   9.51    |
 | testcase07XlargeSubFolders  | 1049.01   |   12.85   |  63.52   |   8.06    |
-| testcase08Speed             | $1        |   7       |          |           |
-| testcase09Ratio             | $1        |   7       |          |           |
+| testcase08Speed             | 613.61    |   10.10   |  63.99   |   7.97    |
+| testcase09Ratio             | 421.31    |   11.91   |  62.71   |   8.74    |
+
+## 开发中遇到的问题
+
+### 数据结构的选择
+
+由于压缩将改变文件长度，压缩后的文件长度未知，最初采用ArrayList储存压缩后的Byte
+
+然而，文件长度的可能上限是可知的，可以在一开始就做好可能的扩容(且这个空间也会比ArrayList一步步翻倍最终占用的空间小)
+
+于是，整个文件的压缩过程中只需要一次复制(从最大长度复制到压缩后获知的精确长度中)，如果不使用writeObject()而是逐字节写入，可以将这次复制也省去(来不及改啦！)
+
+### 字符串操作的性能减损
+
+最初将HashMap直接写入文件当做编码表，比起存入HuffmanTree可以节省大约一半的空间(4KB->2KB)
+
+在压缩过程中，查表也比反复爬树要更节省时间
+
+然而解压时，如果仍采用查表方式，则不得不反复使用subString，以检验缓冲区中的前几位是否在编码表中
+
+该为存入HuffmanTree，使用charAt不断爬树的方式节省了算法中绝大多数的字符串操作
+
+### ObjectIn/OutputStream的使用
+
+为便于储存文件夹结构，压缩中写入才用Object读写
+
+起初的设计中，将地址作为参数，每次在函数内创建流对象，用append模式写入。解压的时候则共用流对象，防止丢失读取进度
+
+然而，ObjectOutputStream将在构造时写入序列化流头，确保构造ObjectInputStream时不会阻塞。[Java-API ObjectOutputStream构造方法](https://www.matools.com/file/manual/jdk_api_1.8_google/java/io/ObjectOutputStream.html#ObjectOutputStream-java.io.OutputStream-)
+
+所以，如果多次new对象输出流，将导致无法顺利读取除首个写入对象以外的所有内容
+
+对象输出流和输入流都必须做成共用同一个实例
+
+### 压缩/解压大文件导致JavaFx无响应
+
+查API后发现，JavaFx的界面是由单独的UI线程维护的，如果再此线程中执行耗时操作，UI将无响应。画面更新也发生在执行结束后，这就意味着很难从UI上提示用户等待、几乎必然造成困惑
+
+为了在耗时操作过程中避免无响应，同时通过UI告知用户等待，就需要使用新的线程
+
+起初尝试使用Thread类，但无法向其传参，既执行不了压缩解压、也无法更改UI界面
+
+JavaFx团队将Thread包装成Task类，转为JavaFx设置后台运行功能。然而同样存在传参问题，引用虽不会报错，但根本引用不到想要的内容(如输出字符串为空内容)
+
+查询[JavaFx-API Task类](https://docs.oracle.com/javase/8/javafx/api/toc.htm)发现，Task只能接受final类型作为参数
+
+通过final传参，执行压缩解压的问题得到解决，但仍无法更改UI，因为Controller中的各个属性不可能以final传入并生效
+
+进一步查询API得知，子线程想要修改UI界面，只能通过请求主线程来实现。JavaFx团队提供了Platform.runlater()函数，在里面更改UI就可以
