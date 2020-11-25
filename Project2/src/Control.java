@@ -5,8 +5,8 @@ public class Control {
         ReadExcel.readExcel();
         Floyd.run();
 
-        int start=209;
-        int end=211;
+        int start=72;
+        int end=90;
 
         System.out.println("start:"+StationInfo.stations[start].name);
         System.out.println("end:"+StationInfo.stations[end].name);

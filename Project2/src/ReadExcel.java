@@ -8,8 +8,8 @@ public class ReadExcel {
     public static void readExcel() throws IOException {
         ShowTime showTime = new ShowTime();
 
-        File file = new File("C:\\Users\\AAA\\Desktop\\DSA_Repository\\DSA_Project\\Project2\\info\\Timetable.xlsx");
-//        File file = new File("C:\\Users\\15344\\Desktop\\DSA_Repository\\DSA_Project\\Project2\\info\\Timetable.xlsx");
+//        File file = new File("C:\\Users\\AAA\\Desktop\\DSA_Repository\\DSA_Project\\Project2\\info\\Timetable.xlsx");
+        File file = new File("C:\\Users\\15344\\Desktop\\DSA_Repository\\DSA_Project\\Project2\\info\\Timetable.xlsx");
         InputStream inputStream = new FileInputStream(file);
         Workbook wb = new XSSFWorkbook(inputStream);// 解析xlsx格式
 
@@ -31,7 +31,10 @@ public class ReadExcel {
                 //System.out.println("row:" + 1 + " index:" + index);
                 StationInfo.stations[index++] = new Station(preName,lineName);//创建当前站点
             }
-            else preIndex = StationInfo.map.get(preName);//起点站已存在，获取index
+            else {
+                preIndex = StationInfo.map.get(preName);//起点站已存在，获取index,增加换乘信息
+                StationInfo.stations[preIndex].line.add(lineName);
+            }
 
             //遍历一条线，载入后面的站
             for (int row = 2; row < sheet.getLastRowNum(); row++) {
@@ -44,7 +47,10 @@ public class ReadExcel {
                     //System.out.println("row:" + row + " index:" + index);
                     StationInfo.stations[index++] = new Station(curName,lineName);//创建当前站点
                 }
-                else curIndex = StationInfo.map.get(curName);
+                else {
+                    curIndex = StationInfo.map.get(curName);
+                    StationInfo.stations[curIndex].line.add(lineName);
+                }
                 //根据站点Index和时间差，赋予二者联系
                 int distance = getTimeDistance(preMin,curMin);
                 //System.out.print("preIndex = " + preIndex + " Name:" + preName);

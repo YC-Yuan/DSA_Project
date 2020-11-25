@@ -12,6 +12,19 @@ public class Path {
     public static void updatePath(Path old, Path newA, Path newB) {
         if (newA.length==Integer.MAX_VALUE||newB.length==Integer.MAX_VALUE) return;
         if (newA.length + newB.length < old.length) {//找到了更小的做法
+//            System.out.println("------merge newA and newB------");
+//            for (Station station:newA.path
+//                 ) {
+//                System.out.print(station.name+station.line);
+//            }
+//            System.out.println();
+//            for (Station station:newB.path
+//                 ) {
+//                System.out.print(station.name+station.line);
+//            }
+//            System.out.println();
+
+
             old.length = newA.length + newB.length;
             //A和B路径的最小节点数为2(起点终点)
             old.path = new Vector<>();
@@ -24,6 +37,13 @@ public class Path {
             for (int i = 1; i < newB.path.size(); i++) {
                 old.path.add(newB.path.get(i));
             }
+
+//            for (Station station:old.path
+//            ) {
+//                System.out.print(station.name+station.line);
+//            }
+//            System.out.println();
+
         }
     }
 
@@ -45,7 +65,6 @@ public class Path {
     public  static String getLineName(Station start,Station end){
         HashSet<String> lineA=new HashSet<>(start.line);
         for (String line:end.line){
-            if(lineA.contains("Line 10 往航中路")) System.out.println("aba");
             if (lineA.contains(line)) return line;
         }
         return "line wrong";
