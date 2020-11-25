@@ -8,7 +8,7 @@ public class StationInfo {
 
     public static String getDistance(int start,int end){
         Path path = stations[start].paths[end];
-        return ("from "+start+" to "+end+" length:" + path.length);
+        return ("from "+start+" to "+end+" length:" + (int)path.length);
     }
 
     public static String getPath(int start,int end){
