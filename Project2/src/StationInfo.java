@@ -2,8 +2,9 @@ import java.util.HashMap;
 import java.util.Vector;
 
 public class StationInfo {
+    public static int mapSize=325;
     public static HashMap<String, Integer> map = new HashMap<>();
-    public static Station[] stations = new Station[312];
+    public static Station[] stations = new Station[mapSize];
 
     public static String getDistance(int start,int end){
         Path path = stations[start].paths[end];

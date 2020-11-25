@@ -18,7 +18,7 @@ public class ReadExcel {
         int index = 0;//该站点总标号
         int preIndex = 0, curIndex;
 
-        for (int i = 0; i < 17; i++) {//对每张表
+        for (int i = 0; i < 19; i++) {//对每张表
             Sheet sheet = wb.getSheetAt(i);// index为i的工作表
             //System.out.println(sheet.getSheetName());
             String lineName = sheet.getSheetName();
@@ -37,7 +37,7 @@ public class ReadExcel {
             }
 
             //遍历一条线，载入后面的站
-            for (int row = 2; row < sheet.getLastRowNum(); row++) {
+            for (int row = 2; row <= sheet.getLastRowNum(); row++) {
                 curName = sheet.getRow(row).getCell(0).toString();
                 curMin = sheet.getRow(row).getCell(1).getLocalDateTimeCellValue().getMinute();
                 curIndex = index;
