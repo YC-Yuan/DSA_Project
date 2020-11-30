@@ -1,3 +1,5 @@
+import com.sun.xml.internal.ws.encoding.HasEncoding;
+
 import java.util.HashSet;
 import java.util.Vector;
 
@@ -9,22 +11,17 @@ public class Path {
         this.path.add(self);
     }
 
-    public static void updatePath(Path old, Path newA, Path newB) {
-        //if (newA.length==Integer.MAX_VALUE||newB.length==Integer.MAX_VALUE) return;
-        if (newA.length + newB.length < old.length) {//找到了更小的做法
-//            System.out.println("------merge newA and newB------");
-//            for (Station station:newA.path
-//                 ) {
-//                System.out.print(station.name+station.line);
-//            }
-//            System.out.println();
-//            for (Station station:newB.path
-//                 ) {
-//                System.out.print(station.name+station.line);
-//            }
-//            System.out.println();
+    public void print(){
+        for (Station station:path
+             ) {
+            System.out.print(station.name);
+            System.out.print("->");
+        }
+        System.out.println();
+    }
 
-
+    public static void updatePath(Path old,Path newA,Path newB) {
+        if (newA.length + newB.length < old.length) {
             old.length = newA.length + newB.length;
             //A和B路径的最小节点数为2(起点终点)
             old.path = new Vector<>();
@@ -32,43 +29,86 @@ public class Path {
                 old.path.add(newA.path.get(i));
             }
             //如果A末与B初线路（取决于与前一节点的共同部分）不同，则添加B的首节点（AB共同节点，换乘站）
-            if (!isSameLine(newA, newB)) {
+            if (!isSameLine(newA,newB)) {
                 old.path.add(newB.path.get(0));
                 //length的小数部分记录换乘
-                old.length+=0.01;
+                old.length += 0.01;
             }
             //不论是否发生换乘，后面的路径都需要添加
             for (int i = 1; i < newB.path.size(); i++) {
                 old.path.add(newB.path.get(i));
             }
 
-//            for (Station station:old.path
-//            ) {
-//                System.out.print(station.name+station.line);
-//            }
-//            System.out.println();
-
         }
     }
 
-    public static boolean isSameLine(Path a, Path b) {
-        Station pre = a.path.get(a.path.size() - 2);//倒数第二个
-        Station cur = a.path.get(a.path.size() - 1);//最后一个
-        Station next = b.path.get(1);//第二个
-
-        HashSet<String> lineA = new HashSet<>(pre.line);
-        HashSet<String> lineB = new HashSet<>(next.line);
+    public static boolean isSameLine(Path a,Path b) {
+        /*Station pre = a.path.get(a.path.size() - 2);//连接站前一站
+        Station cur = a.path.get(a.path.size() - 1);//连接站
+        Station next = b.path.get(1);//连接站后一站
 
         for (String line : cur.line
         ) {
-            if (lineA.contains(line) && lineB.contains(line)) return true;
+            if (pre.line.contains(line) && next.line.contains(line)) return true;//如果前中后有共用站则认为共线
         }
-        return false;
+        return false;*/
+
+        HashSet<String> tail = getPathLineTail(a);
+        HashSet<String> head = getPathLineHead(b);
+
+        boolean trigger=false;
+        /*if ((tail.contains("Line 3")||tail.contains("Line 4"))&&(head.contains("Line 3")||head.contains("Line 4"))){
+            System.out.println("---------------");
+            a.print();
+            System.out.println(tail);
+            b.print();
+            System.out.println(head);
+            trigger=true;
+        }*/
+
+        tail.retainAll(head);//取交集
+        boolean result=tail.isEmpty();
+
+        if (trigger&& result) {
+        }
+
+        return !result;//是否有相同元素(线路)
     }
 
-    public  static String getLineName(Station start,Station end){
-        HashSet<String> lineA=new HashSet<>(start.line);
-        for (String line:end.line){
+    public static HashSet<String> getPathLineTail(Path a) {//找到一个线路下车时应乘的线
+        if (a.path.size() == 1) return new HashSet<>(a.path.get(0).line);
+        else {
+            Vector<Station> path = a.path;
+            HashSet<String> currentSet = new HashSet<>(path.get(path.size() - 1).line);
+            HashSet<String> saveSet;
+            for (int i = path.size() - 2; i >= 0; i--) {
+                saveSet = new HashSet<>(currentSet);
+                currentSet.retainAll(path.get(i).line);
+                if (currentSet.isEmpty()) return saveSet;
+            }
+            return currentSet;
+        }
+    }
+
+    public static HashSet<String> getPathLineHead(Path a) {//找到一个线路上车时对应先
+        if (a.path.size() == 1) return new HashSet<>(a.path.get(0).line);
+        else {
+            Vector<Station> path = a.path;
+            HashSet<String> currentSet = new HashSet<>(path.get(0).line);
+            HashSet<String> saveSet;
+            for (int i = 1; i < path.size(); i++) {
+                saveSet = new HashSet<>(currentSet);
+                currentSet.retainAll(path.get(i).line);
+                if (currentSet.isEmpty()) return saveSet;
+            }
+            return currentSet;
+        }
+    }
+
+    public static String getLineName(Station start,Station end) {
+        HashSet<String> lineA = new HashSet<>(start.line);
+
+        for (String line : end.line) {
             if (lineA.contains(line)) return line;
         }
         return "line wrong";
