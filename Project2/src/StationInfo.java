@@ -10,7 +10,7 @@ public class StationInfo {
     public static Station[] stations = new Station[mapSize];
 
     public static String infoPath;
-    public static int infoDistance;
+    public static double infoDistance;
 
     public static void printInfoPath() {//展示现在的路径
         System.out.println(infoPath);
@@ -25,7 +25,7 @@ public class StationInfo {
     public static void getDistance(String startName,String endName) {//根据两站点修改信息
         int start = StationInfo.map.get(startName);
         int end = StationInfo.map.get(endName);
-        infoDistance = (int) stations[start].paths[end].length;
+        infoDistance = stations[start].paths[end].length;
     }
 
     public static void getMultiDistance(String multiPath) {
@@ -36,7 +36,7 @@ public class StationInfo {
         }
         int start;
         int end;
-        int time = 0;
+        double time = 0;
         //StringBuilder result = new StringBuilder(stationNames[0]);
         for (int i = 0; i < stationNames.length - 1; i++) {
             start = StationInfo.map.get(stationNames[i]);
@@ -60,12 +60,16 @@ public class StationInfo {
             result.append(Path.getLineName(path.get(i),path.get(i + 1))).append("-");
         }
         result.append(path.get(path.size() - 1).name);
+        result.append(" 共").append(path.size()).append("站");
         infoPath = result.toString();
     }
 
-    public static String getMultiPath(String multiPath) {
+    public static void getMultiPath(String multiPath) {
         String[] stationNames = multiPath.split("\\s+");
-        if (stationNames.length <= 1) return "站点数量错误";
+        if (stationNames.length <= 1) {
+            infoPath = "站点数量错误";
+            return;
+        }
         int start = 0;
         int end = 0;
 
@@ -75,13 +79,15 @@ public class StationInfo {
             start = StationInfo.map.get(stationNames[i]);
             end = StationInfo.map.get(stationNames[i + 1]);
             path = stations[start].paths[end].path;
+            result.append("\n");
             for (int j = 0; j < path.size() - 1; j++) {//每次配对，输出路径
                 result.append(path.get(j).name).append("-");//"这一站-"
                 result.append(Path.getLineName(path.get(j),path.get(j + 1))).append("-");//"Line X-"
             }
+
         }
         result.append(stations[start].paths[end].path.get(path.size() - 1).name);
 
-        return result.toString();
+        infoPath = result.toString();
     }
 }
