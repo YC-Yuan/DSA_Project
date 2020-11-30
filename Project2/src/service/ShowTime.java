@@ -1,5 +1,8 @@
+package service;
+
 public class ShowTime {
     private long start;
+    public static long readCost,floydCost;
 
     public ShowTime() {
         start = System.currentTimeMillis();

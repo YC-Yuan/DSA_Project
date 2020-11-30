@@ -1,3 +1,7 @@
+package service;
+
+import service.Path;
+
 import java.util.HashSet;
 
 public class Station {
@@ -8,7 +12,7 @@ public class Station {
 
     public Station(String name,String line) {
         this.name = name;
-        this.line = new HashSet<String>();
+        this.line = new HashSet<>();
         this.line.add(line);
         this.paths = new Path[StationInfo.mapSize];
         for (int i = 0; i < StationInfo.mapSize; i++) {

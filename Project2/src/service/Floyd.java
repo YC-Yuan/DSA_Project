@@ -1,13 +1,14 @@
+package service;
+
+import java.util.Arrays;
+import java.util.Vector;
+
 public class Floyd {
     public static void run() {
-        ShowTime showTime=new ShowTime();
-
         //初始化，每个结点到自己的距离为0
-        for (int i=0;i<StationInfo.mapSize;i++){
-            StationInfo.stations[i].paths[i].length=0;
+        for (int i = 0; i < StationInfo.mapSize; i++) {
+            StationInfo.stations[i].paths[i].length = 0;
         }
-
-
         for (int i = 0; i < StationInfo.mapSize; i++) {//在i轮纳入0号station
             for (int start = 0; start < StationInfo.mapSize; start++) {
                 for (int end = 0; end < StationInfo.mapSize; end++) {//迭代更新从start到end站点间的路径
@@ -19,7 +20,5 @@ public class Floyd {
                 }
             }
         }
-
-        showTime.printTime("floyd costs:");
     }
 }
