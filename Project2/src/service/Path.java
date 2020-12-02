@@ -11,15 +11,15 @@ public class Path {
         path.add(self);
     }
 
-    public void init(Station first, double length) {
+    public void init(Station first,double length) {
         if (path.size() == 1) {
-            this.length=length;
+            this.length = length;
             path.add(first);
         }
 
     }
 
-    public static void updatePath(Path old, Path newA, Path newB) {
+    public static void updatePath(Path old,Path newA,Path newB) {
         if (newA.length + newB.length < old.length) {
             old.length = newA.length + newB.length;
             //A和B路径的最小节点数为2(起点终点)
@@ -28,7 +28,7 @@ public class Path {
                 old.path.add(newA.path.get(i));
             }
             //如果A末与B初线路（取决于与前一节点的共同部分）不同，则添加B的首节点（AB共同节点，换乘站）
-            if (!isSameLine(newA, newB)) {
+            if (!isSameLine(newA,newB)) {
                 old.path.add(newB.path.get(0));
                 //length的小数部分记录换乘
                 old.length += 0.01;
@@ -41,35 +41,13 @@ public class Path {
         }
     }
 
-    public static boolean isSameLine(Path a, Path b) {
-        /*service.Station pre = a.path.get(a.path.size() - 2);//连接站前一站
-        service.Station cur = a.path.get(a.path.size() - 1);//连接站
-        service.Station next = b.path.get(1);//连接站后一站
-
-        for (String line : cur.line
-        ) {
-            if (pre.line.contains(line) && next.line.contains(line)) return true;//如果前中后有共用站则认为共线
-        }
-        return false;*/
+    public static boolean isSameLine(Path a,Path b) {
 
         HashSet<String> tail = getPathLineTail(a);
         HashSet<String> head = getPathLineHead(b);
 
-        boolean trigger = false;
-        /*if ((tail.contains("Line 3")||tail.contains("Line 4"))&&(head.contains("Line 3")||head.contains("Line 4"))){
-            System.out.println("---------------");
-            a.print();
-            System.out.println(tail);
-            b.print();
-            System.out.println(head);
-            trigger=true;
-        }*/
-
         tail.retainAll(head);//取交集
         boolean result = tail.isEmpty();
-
-        if (trigger && result) {
-        }
 
         return !result;//是否有相同元素(线路)
     }
@@ -104,7 +82,7 @@ public class Path {
         }
     }
 
-    public static String getLineName(Station start, Station end) {
+    public static String getLineName(Station start,Station end) {
         HashSet<String> lineA = new HashSet<>(start.line);
 
         for (String line : end.line) {

@@ -27,14 +27,14 @@ public class ReadExcel {
             preName = sheet.getRow(1).getCell(0).toString();//获取第一站
             preMin = sheet.getRow(1).getCell(1).getLocalDateTimeCellValue().getMinute();
             //创建起点站,需要检测站点存在与否
-            if (!StationInfo.map.containsKey(preName)) {//起点站未重复，创建！
-                StationInfo.map.put(preName, index);
-                StationInfo.stations[index] = new Station(preName, index);//创建当前站点
-                StationInfo.stations[index].line.add(lineName);
+            if (!Info.map.containsKey(preName)) {//起点站未重复，创建！
+                Info.map.put(preName, index);
+                Info.stations[index] = new Station(preName, index);//创建当前站点
+                Info.stations[index].line.add(lineName);
                 preIndex = index++;
             } else {
-                preIndex = StationInfo.map.get(preName);//起点站已存在，获取index,增加换乘信息
-                StationInfo.stations[preIndex].line.add(lineName);
+                preIndex = Info.map.get(preName);//起点站已存在，获取index,增加换乘信息
+                Info.stations[preIndex].line.add(lineName);
             }
 
             //遍历一条线，载入后面的站
@@ -43,21 +43,21 @@ public class ReadExcel {
                 curMin = sheet.getRow(row).getCell(1).getLocalDateTimeCellValue().getMinute();
                 curIndex = index;
                 //相邻站点名称、时间、标号获取完毕
-                if (!StationInfo.map.containsKey(curName)) {//对尚不存在的站点
-                    StationInfo.map.put(curName, index);
-                    StationInfo.stations[index] = new Station(curName, index);//创建当前站点
-                    StationInfo.stations[index++].line.add(lineName);
+                if (!Info.map.containsKey(curName)) {//对尚不存在的站点
+                    Info.map.put(curName, index);
+                    Info.stations[index] = new Station(curName, index);//创建当前站点
+                    Info.stations[index++].line.add(lineName);
                 } else {
-                    curIndex = StationInfo.map.get(curName);
-                    StationInfo.stations[curIndex].line.add(lineName);
+                    curIndex = Info.map.get(curName);
+                    Info.stations[curIndex].line.add(lineName);
                 }
                 //根据站点Index和时间差，赋予二者联系
                 int distance = getTimeDistance(preMin, curMin);
 
-                StationInfo.stations[preIndex].neighborStation.add(StationInfo.stations[curIndex]);
-                StationInfo.stations[preIndex].neighborTime.add(distance);
-                StationInfo.stations[curIndex].neighborStation.add(StationInfo.stations[preIndex]);
-                StationInfo.stations[curIndex].neighborTime.add(distance);
+                Info.stations[preIndex].neighborStation.add(Info.stations[curIndex]);
+                Info.stations[preIndex].neighborTime.add(distance);
+                Info.stations[curIndex].neighborStation.add(Info.stations[preIndex]);
+                Info.stations[curIndex].neighborTime.add(distance);
 
                 //更新信息
                 preMin = curMin;
