@@ -9,7 +9,8 @@ public class StationInfo {
     public static Station[] stations = new Station[mapSize];
 
     public static String infoPath;
-    public static double infoDistance;
+    public static int infoDistance;
+    public static int infoChange;
 
     public static void updateMultiDistance(String multiPath) {
         String[] stationNames = multiPath.split("\\s+");
@@ -21,7 +22,8 @@ public class StationInfo {
             end = StationInfo.map.get(stationNames[i + 1]);
             time += stations[start].paths[end].length;
         }
-        infoDistance = time;
+        infoDistance = (int)time;
+        infoChange=(int)Math.round(time*100)%100;
     }
     public static void updateMultiPath(String multiPath) {
         String[] stationNames = multiPath.split("\\s+");
