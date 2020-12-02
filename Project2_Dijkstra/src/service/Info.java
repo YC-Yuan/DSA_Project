@@ -1,5 +1,7 @@
 package service;
 
+import org.apache.commons.compress.utils.FlushShieldFilterOutputStream;
+
 import java.lang.reflect.Array;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -19,9 +21,15 @@ public class Info {
     public static int infoDistance;
     public static int infoChange;
 
+    public static int multiTime;
+    public static int multiChange;
+    public static String multiStr;
+
+
     public static void query(String multiName){
-        System.out.println(multiName);
+
         String[] stationNames = multiName.split("\\s+");
+
         int start;
         int end;
         int time = 0;
@@ -30,7 +38,7 @@ public class Info {
         for (int i = 0; i < stationNames.length - 1; i++) {//两站两站寻找
             start = Info.map.get(stationNames[i]);
             end = Info.map.get(stationNames[i + 1]);
-            /*if (pathTable[start][end]!=null){//已经算过了，直接拿来用
+            if (pathTable[start][end]!=null){//已经算过了，直接拿来用
                 time+=timeTable[start][end];
                 change+=changeTable[start][end];
                 str.append(pathTable[start][end]);
@@ -39,14 +47,15 @@ public class Info {
                 Dijkstra.run(start,end);
                 time+=infoDistance;
                 change+=infoChange;
-                str.append(infoPath);
-            }*/
-            Dijkstra.run(start,end);
+                str.append(infoPath).append("|");
+            }
+            /*Dijkstra.run(start,end);
             time+=infoDistance;
             change+=infoChange;
-            str.append(infoPath);
+            str.append(infoPath);*/
         }
-        System.out.println("用时：" + time + "分钟，换乘数：" + change);
-        System.out.println(str);
+        multiStr=str.toString();
+        multiTime=time;
+        multiChange=change;
     }
 }

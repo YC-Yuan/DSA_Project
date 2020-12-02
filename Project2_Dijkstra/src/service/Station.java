@@ -7,6 +7,7 @@ public class Station implements Comparable<Station> {
     public String name;
     public int index;//站点编号
     public HashSet<String> line = new HashSet<>();
+    public HashSet<String> currentLine = new HashSet<>();
     public Vector<Station> neighborStation = new Vector<>();//按顺序存储相邻站点
     public Vector<Integer> neighborTime = new Vector<>();//存储相邻站点时间
 

@@ -67,7 +67,7 @@ public class Path {
         }
     }
 
-    public static HashSet<String> getPathLineHead(Path a) {//找到一个线路上车时对应先
+    public static HashSet<String> getPathLineHead(Path a) {//找到一个线路上车时对应的线
         if (a.path.size() == 1) return new HashSet<>(a.path.get(0).line);
         else {
             Vector<Station> path = a.path;

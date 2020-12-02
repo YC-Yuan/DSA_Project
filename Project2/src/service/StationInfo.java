@@ -22,6 +22,7 @@ public class StationInfo {
             end = StationInfo.map.get(stationNames[i + 1]);
             time += stations[start].paths[end].length;
         }
+        System.out.println("time = " + time);
         infoDistance = (int)time;
         infoChange=(int)Math.round(time*100)%100;
     }
