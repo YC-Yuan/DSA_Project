@@ -37,7 +37,8 @@ public class Controller {
 
             String result = "读取表格用时："+ ShowTime.readCost+"mills,算法计算用时："+ShowTime.floydCost+"mills";
             result += "\n" + StationInfo.infoPath;
-            result += "\n" + "用时" + (int) StationInfo.infoDistance + "分钟";
+            result += "\n" + "用时：" + StationInfo.infoDistance + "分钟";
+            result+="\n"+"换乘数："+StationInfo.infoChange+"次";
 
             output.setText(result);
         } else {
