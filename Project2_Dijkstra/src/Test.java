@@ -18,11 +18,11 @@ public class Test {
 
 
         while((input=br.readLine())!=null){
-            System.out.println(input);
+            //System.out.println(input);
             Info.query(input);
             System.out.println("路线：" + Info.multiStr);
             System.out.println("用时：" + Info.multiTime);
-            System.out.println("换乘数：" + Info.multiChange);
+            //System.out.println("换乘数：" + Info.multiChange);
         }
         showTime.printTime("运行总耗时：");
     }

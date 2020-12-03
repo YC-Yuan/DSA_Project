@@ -28,9 +28,13 @@ public class Dijkstra {
         PriorityQueue<Station> queue = new PriorityQueue<>();
         queue.add(Info.stations[startIndex]);
         Station current, neighbor;
-        while (!queue.isEmpty()) {
 
-            current = queue.poll();
+        int turn =0;
+        while (!queue.isEmpty()) {
+            do {
+                current = queue.poll();
+                turn++;
+            }while (current.isConsidered);
             current.isConsidered = true;
 
             //对于正在考虑的节点：
@@ -61,6 +65,7 @@ public class Dijkstra {
                 if (!neighbor.isConsidered) queue.add(neighbor);
             }
         }
+        System.out.println("turn = " + turn);
 
         //这时候获得了start到所有点的最短路径和距离，更新结果与缓存表
 /*        int tmpDistance=Math.round(Info.stations[endIndex].distance * 100);
