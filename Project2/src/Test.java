@@ -28,8 +28,8 @@ public class Test {
             StationInfo.updateMultiDistance(input);
 
             System.out.println("路线：" + StationInfo.infoPath);
-            System.out.println("用时：" + StationInfo.infoDistance);
-            System.out.println("换乘数：" + StationInfo.infoChange);
+            //System.out.println("用时：" + StationInfo.infoDistance);
+            //System.out.println("换乘数：" + StationInfo.infoChange);
         }
         showTime.printTime("运行总耗时：");
 

@@ -1,12 +1,6 @@
 package service;
 
-import org.apache.commons.compress.utils.FlushShieldFilterOutputStream;
-
-import java.lang.reflect.Array;
-import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Vector;
 
 public class Info {
     public static int mapSize = 325;
