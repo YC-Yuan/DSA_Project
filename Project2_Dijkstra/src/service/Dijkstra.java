@@ -6,7 +6,7 @@ import java.util.PriorityQueue;
 import java.util.Vector;
 
 public class Dijkstra {
-    public static void run(int startIndex,int endIndex) {
+    public static void run(int startIndex, int endIndex) {
 
         //初始化，所有站点距离标记为10000，起点站标记为0
         for (Station station : Info.stations
@@ -36,6 +36,7 @@ public class Dijkstra {
             //1.对所有相邻节点做更新
             for (int i = 0; i < current.neighborStation.size(); i++) {//对所有邻居
                 neighbor = current.neighborStation.get(i);
+
                 if (current.distance + current.neighborTime.get(i) < neighbor.distance) {
                     neighbor.distance = current.distance + current.neighborTime.get(i);//更新时间
 
@@ -48,19 +49,18 @@ public class Dijkstra {
                         neighbor.distance += 1;
                         neighbor.currentLine = new HashSet<>(neighbor.line);
                         neighbor.currentLine.retainAll(current.line);
-                    }
-                    else {//不换乘，删除中间节点
+                    } else {//不换乘，删除中间节点
                         //判断current是否为中间节点，可以删除
-                        /*if (neighbor.name.equals("宜山路")||neighbor.name.equals("漕溪路")) {
+                        /*if (neighbor.name.equals("中山公园")) {
                             System.out.println("----------");
-                            System.out.println("current:"+current.name+" neighbor:"+neighbor.name);
+                            System.out.println("current:" + current.name + " neighbor:" + neighbor.name);
                             for (Station st : neighbor.path
                             ) {
                                 System.out.print(st.name + " " + st.line + "|");
                             }
                             System.out.println();
-                            System.out.print("currentLine"+current.currentLine);
-                            System.out.println("updateLine:"+neighbor.currentLine);
+                            System.out.print("currentLine" + current.currentLine);
+                            System.out.println("updateLine:" + neighbor.currentLine);
                         }*/
                         if (neighbor.path.size() > 1) neighbor.path.remove(neighbor.path.size() - 1);
                         //不论如何，不换乘的新节点一定是中间节点了
@@ -105,7 +105,7 @@ public class Dijkstra {
 
 
     //考虑从前一个点正在走的路径，到下一个点是否有换乘
-    public static boolean isLineChanged(Station current,Station next) {
+    public static boolean isLineChanged(Station current, Station next) {
         HashSet<Integer> currentLine;
         currentLine = new HashSet<>(current.currentLine);
         //判断currentLine与next有无交集

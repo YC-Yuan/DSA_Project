@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 public class Info {
 
-    public static int mapSize = 325;
+    public static int mapSize = 324;
     public static HashMap<String,Integer> map = new HashMap<>();
     public static Station[] stations = new Station[mapSize];
 
@@ -40,7 +40,7 @@ public class Info {
                 change += changeTable[start][end];
                 //不仅有可能算过，还有可能已经转化过，更要直接拿来用
                 if (strTable[start][end] != null) {
-                    str.append(strTable[start][end]);
+                    str.append(strTable[start][end]).append("|");
                 }
                 else {
                     //要是真的没算过，就算一下然后存起来
@@ -49,11 +49,11 @@ public class Info {
                     strTable[start][end] = tmpString.toString();
                 }
             }
-            else {
+            else {//现算现用
                 Dijkstra.run(start,end);
                 time += infoDistance;
                 change += infoChange;
-                str.append(infoPath).append("|");
+                str.append(infoPath.toStringBuilder()).append("|");
             }
             /*Dijkstra.run(start,end);
             time+=infoDistance;
