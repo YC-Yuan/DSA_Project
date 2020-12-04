@@ -1,6 +1,8 @@
 package service;
 
 import org.apache.commons.collections4.IterableMap;
+import org.apache.poi.hslf.dev.TextStyleListing;
+import org.junit.Test;
 
 import javax.jnlp.SingleInstanceListener;
 import java.util.HashSet;
@@ -41,8 +43,8 @@ public class Dijkstra {
                 neighbor = current.neighborStation.get(i);
                 if (current.distance + current.neighborTime.get(i) < neighbor.distance) {
                     neighbor.distance = current.distance + current.neighborTime.get(i);//更新时间
-                    neighbor.path = new Vector<>(current.path);//先复制之前的路
 
+                    neighbor.path = new Vector<>(current.path);//先复制之前的路
 
                     HashSet<Integer> tmpLine = new HashSet<>(current.currentLine);
                     tmpLine.retainAll(neighbor.line);//没换乘，但是收束了
@@ -65,7 +67,7 @@ public class Dijkstra {
                             System.out.print("currentLine"+current.currentLine);
                             System.out.println("updateLine:"+neighbor.currentLine);
                         }*/
-                        if (neighbor.path.size()>1) neighbor.path.remove(neighbor.path.size() - 1);
+                        if (neighbor.path.size() > 1) neighbor.path.remove(neighbor.path.size() - 1);
                         //不论如何，不换乘的新节点一定是中间节点了
                     }
 
@@ -99,8 +101,7 @@ public class Dijkstra {
             tmpDistance = Math.round(Info.stations[i].distance);
             Info.changeTable[startIndex][i] = tmpDistance % 100;
             Info.timeTable[startIndex][i] = tmpDistance / 100;
-            Info.pathTable[startIndex][i] = new StringBuilder();
-                    //toStringBuilder(Info.stations[i].path);
+            Info.pathTable[startIndex][i] = new Path(Info.stations[i].path);
         }
         Info.infoChange = Info.changeTable[startIndex][endIndex];
         Info.infoDistance = Info.timeTable[startIndex][endIndex];
@@ -115,23 +116,5 @@ public class Dijkstra {
         //判断currentLine与next有无交集
         currentLine.retainAll(next.line);
         return currentLine.isEmpty();
-    }
-
-    public static StringBuilder toStringBuilder(Vector<Station> path) {
-        StringBuilder result = new StringBuilder();
-        for (int j = 0; j < path.size() - 1; j++) {//每次配对，输出路径
-            result.append(path.get(j).name).append("-");//"这一站-"
-            result.append(getLineName(path.get(j),path.get(j + 1))).append("-");//"Line X-"
-        }
-        result.append(path.get(path.size() - 1).name);
-        return result;
-    }
-
-    public static Integer getLineName(Station start,Station end) {
-        HashSet<Integer> lineA = new HashSet<>(start.line);
-        for (Integer line : end.line) {
-            if (lineA.contains(line)) return line;
-        }
-        return 0;
     }
 }

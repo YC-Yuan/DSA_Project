@@ -2,14 +2,12 @@ import service.*;
 
 import java.io.*;
 
-public class Test {
+public class MyTest {
     public static void main(String[] args) throws IOException {
         File file=new File("info\\performance.txt");
         FileInputStream fileInputStream=new FileInputStream(file);
 
         BufferedReader br=new BufferedReader(new InputStreamReader(fileInputStream));
-
-
 
         ReadExcel.readExcel();
 
@@ -30,6 +28,7 @@ public class Test {
             System.out.println("  换乘数：" + Info.multiChange);
         }
 
+        System.out.println("toString次数：" + Info.toStringCalled );
         showTime.printTime("运行总耗时：");
     }
 }
