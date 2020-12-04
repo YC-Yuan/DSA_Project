@@ -3,6 +3,7 @@ package service;
 public class ShowTime {
     private long start;
     public static long readCost,floydCost;
+    public static ShowTime global;
 
     public ShowTime() {
         start = System.currentTimeMillis();

@@ -1,36 +1,32 @@
 package service;
 
-import com.sun.corba.se.spi.orbutil.threadpool.Work;
 import jxl.Sheet;
 import jxl.Workbook;
-import jxl.read.biff.BiffException;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
-import java.nio.Buffer;
 
-public class JxlRead {
-    public static void main(String[] args) throws IOException, BiffException {
-        ShowTime showTime = new ShowTime();
-        readExcel();
-        showTime.printTime("read cost:");
+public class TxtRead {
+    public static void main(String[] args) throws IOException {
+        read();
     }
 
-    public static void readExcel() throws IOException, BiffException {
-        File file = new File("info\\Timetable.xls");
-        InputStream excel = new BufferedInputStream(new FileInputStream("info\\Timetable.xls"));
-        Workbook wb = Workbook.getWorkbook(excel);
+    public static void read() throws IOException {
         String preName, curName;
         int preMin, curMin;
         int index = 0;//该站点总标号
         int preIndex, curIndex;
 
-        for (int i = 0; i < wb.getNumberOfSheets(); i++) {//对每张表
-            Sheet sheet = wb.getSheet(i);//index为i的工作表
-            int lineName = getLine(i);//根据sheetIndex拿到线路
+        for (int i = 1; i < 20; i++) {//对19个TXT
+            File txtFile = new File("info\\timetable\\" + i + ".txt");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(txtFile)));
 
-            preName = sheet.getCell(0,1).getContents();
-            preMin = Integer.parseInt(sheet.getCell(1,1).getContents().substring(sheet.getCell(1,1).getContents().lastIndexOf(':') + 1));
+            String message = reader.readLine();
+            String[] info = message.split("\\t");
+
+            int lineName = getLine(i);//根据sheetIndex拿到线路
+            preName = info[0];
+            preMin = Integer.parseInt(info[1].substring(info[1].lastIndexOf(':') + 1));
+
             //创建起点站,需要检测站点存在与否
             if (!Info.map.containsKey(preName)) {//起点站未重复，创建！
                 Info.map.put(preName,index);
@@ -44,9 +40,12 @@ public class JxlRead {
             }
 
             //遍历一条线，载入后面的站
-            for (int row = 2; row < sheet.getRows(); row++) {
-                curName = sheet.getCell(0,row).getContents();
-                curMin = Integer.parseInt(sheet.getCell(1,row).getContents().substring(sheet.getCell(1,row).getContents().lastIndexOf(':') + 1));
+            while ((message = reader.readLine()) != null) {
+                info = message.split("\\t");
+
+
+                curName = info[0];
+                curMin = Integer.parseInt(info[1].substring(info[1].lastIndexOf(':') + 1));
                 curIndex = index;
                 //相邻站点名称、时间、标号获取完毕
                 if (!Info.map.containsKey(curName)) {//对尚不存在的站点
@@ -73,19 +72,18 @@ public class JxlRead {
         }
     }
 
-    private static int getLine(int sheetIndex) {
-        switch (sheetIndex) {
-            case 13:
+    public static int getLine(int index) {
+        switch (index) {
             case 14:
+            case 15:
                 return 10;
-            case 17:
             case 18:
+            case 19:
                 return 11;
             default:
-                return sheetIndex + 1;
+                return index;
         }
     }
-
 
     private static int getTimeDistance(int preMin,int curMin) {
         int distance = curMin - preMin;

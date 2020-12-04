@@ -3,7 +3,6 @@ package service;
 import java.util.HashMap;
 
 public class Info {
-    public static int toStringCalled = 0;
 
     public static int mapSize = 325;
     public static HashMap<String,Integer> map = new HashMap<>();

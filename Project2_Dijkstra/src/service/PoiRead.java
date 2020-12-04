@@ -6,7 +6,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
 
-public class ReadExcel {
+public class PoiRead {
     public static void readExcel() throws IOException {
         File file = new File("info\\Timetable.xlsx");
         InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
