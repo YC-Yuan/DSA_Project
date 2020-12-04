@@ -1,28 +1,36 @@
 package service;
 
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import com.sun.corba.se.spi.orbutil.threadpool.Work;
+import jxl.Sheet;
+import jxl.Workbook;
+import jxl.read.biff.BiffException;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
+import java.nio.Buffer;
 
-public class ReadExcel {
-    public static void readExcel() throws IOException {
-        File file = new File("info\\Timetable.xlsx");
-        InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
-        Workbook wb = new XSSFWorkbook(inputStream);// 解析xlsx格式
+public class JxlRead {
+    public static void main(String[] args) throws IOException, BiffException {
+        ShowTime showTime = new ShowTime();
+        readExcel();
+        showTime.printTime("read cost:");
+    }
 
+    public static void readExcel() throws IOException, BiffException {
+        File file = new File("info\\Timetable.xls");
+        InputStream excel = new BufferedInputStream(new FileInputStream("info\\Timetable.xls"));
+        Workbook wb = Workbook.getWorkbook(excel);
         String preName, curName;
         int preMin, curMin;
         int index = 0;//该站点总标号
         int preIndex, curIndex;
 
         for (int i = 0; i < wb.getNumberOfSheets(); i++) {//对每张表
-            Sheet sheet = wb.getSheetAt(i);//index为i的工作表
+            Sheet sheet = wb.getSheet(i);//index为i的工作表
             int lineName = getLine(i);//根据sheetIndex拿到线路
 
-            preName = sheet.getRow(1).getCell(0).toString();//获取第一站
-            preMin = sheet.getRow(1).getCell(1).getLocalDateTimeCellValue().getMinute();
+            preName = sheet.getCell(0,1).getContents();
+            preMin = Integer.parseInt(sheet.getCell(1,1).getContents().substring(3));
             //创建起点站,需要检测站点存在与否
             if (!Info.map.containsKey(preName)) {//起点站未重复，创建！
                 Info.map.put(preName,index);
@@ -36,9 +44,9 @@ public class ReadExcel {
             }
 
             //遍历一条线，载入后面的站
-            for (int row = 2; row <= sheet.getLastRowNum(); row++) {
-                curName = sheet.getRow(row).getCell(0).toString();
-                curMin = sheet.getRow(row).getCell(1).getLocalDateTimeCellValue().getMinute();
+            for (int row = 2; row < sheet.getRows(); row++) {
+                curName = sheet.getCell(0,row).getContents();
+                curMin = Integer.parseInt(sheet.getCell(1,row).getContents().substring(3));
                 curIndex = index;
                 //相邻站点名称、时间、标号获取完毕
                 if (!Info.map.containsKey(curName)) {//对尚不存在的站点
@@ -63,7 +71,6 @@ public class ReadExcel {
                 preIndex = curIndex;
             }
         }
-        inputStream.close();
     }
 
     private static int getLine(int sheetIndex) {
@@ -82,6 +89,6 @@ public class ReadExcel {
 
     private static int getTimeDistance(int preMin,int curMin) {
         int distance = curMin - preMin;
-        return distance < 0 ? 100*(distance + 60) : 100*distance;
+        return distance < 0 ? 100 * (distance + 60) : 100 * distance;
     }
 }
