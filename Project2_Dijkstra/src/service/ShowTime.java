@@ -20,5 +20,9 @@ public class ShowTime {
     public void printTime(String prefix) {
         System.out.println(prefix + (System.currentTimeMillis() - start) + "mills");
     }
+
+    public String getPrintTime(String prefix){
+        return prefix + (System.currentTimeMillis() - start) + "mills";
+    }
 }
 

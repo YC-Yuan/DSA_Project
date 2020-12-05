@@ -24,7 +24,6 @@ public class Info {
 
 
     public static void query(String multiName) {
-
         String[] stationNames =Util.splitByTokenizer(multiName);
 
         int start;
