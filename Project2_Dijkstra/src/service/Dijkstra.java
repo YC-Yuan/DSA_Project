@@ -50,37 +50,9 @@ public class Dijkstra {
                         neighbor.currentLine = new HashSet<>(neighbor.line);
                         neighbor.currentLine.retainAll(current.line);
                     } else {//不换乘，删除中间节点
-                        //判断current是否为中间节点，可以删除
-                        /*if (neighbor.name.equals("中山公园")) {
-                            System.out.println("----------");
-                            System.out.println("current:" + current.name + " neighbor:" + neighbor.name);
-                            for (Station st : neighbor.path
-                            ) {
-                                System.out.print(st.name + " " + st.line + "|");
-                            }
-                            System.out.println();
-                            System.out.print("currentLine" + current.currentLine);
-                            System.out.println("updateLine:" + neighbor.currentLine);
-                        }*/
                         if (neighbor.path.size() > 1) neighbor.path.remove(neighbor.path.size() - 1);
                         //不论如何，不换乘的新节点一定是中间节点了
                     }
-
-                    //需要判断是否换乘了
-                    /*if (isLineChanged(current,neighbor)) {//换乘了，+1
-                        neighbor.distance += 1;
-                        neighbor.currentLine = neighbor.line;
-                        neighbor.isMiddleStation = false;
-                    }
-                    else {//没换乘，当前站在线路中间，则要从路径中删除
-                        neighbor.isMiddleStation = true;//不换乘肯定在中间
-                        if (current.isMiddleStation) {
-                            neighbor.path.remove(neighbor.path.size() - 1);
-                        }
-                        //不换乘，收束当前线路的站点
-                        neighbor.currentLine = new HashSet<>(current.currentLine);
-                        neighbor.currentLine.retainAll(neighbor.line);
-                    }*/
 
                     //不论换不换乘，总要加入新的站
                     neighbor.path.add(neighbor);
