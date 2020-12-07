@@ -17,6 +17,10 @@ public class Main extends Application {
         primaryStage.setScene(new Scene(root, 600, 400));
         primaryStage.setResizable(false);
         primaryStage.show();
+
+        ShowTime showTime = new ShowTime();
+        TxtRead.read();
+        Info.infoLoadTime = (int) showTime.getTime();
     }
 
 

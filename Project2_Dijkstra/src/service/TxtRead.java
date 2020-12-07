@@ -3,13 +3,10 @@ package service;
 import java.io.*;
 
 public class TxtRead {
-    public static void main(String[] args) throws IOException {
-        read();
-    }
+    //这个类从txt中读取信息，速度最快
+    //跑完时stations与map加载完成
 
     public static void read() throws IOException {
-
-
         String preName, curName;
         int preMin, curMin;
         int index = 0;//该站点总标号
@@ -37,12 +34,9 @@ public class TxtRead {
                 preIndex = Info.map.get(preName);//起点站已存在，获取index,增加换乘信息
                 Info.stations[preIndex].line.add(lineName);
             }
-
             //遍历一条线，载入后面的站
             while ((message = reader.readLine()) != null) {
                 info = message.split("\\t");
-
-
                 curName = info[0];
                 curMin = Integer.parseInt(info[1].substring(info[1].lastIndexOf(':') + 1));
                 curIndex = index;
@@ -58,12 +52,10 @@ public class TxtRead {
                 }
                 //根据站点Index和时间差，赋予二者联系
                 int distance = getTimeDistance(preMin,curMin);
-
                 Info.stations[preIndex].neighborStation.add(Info.stations[curIndex]);
                 Info.stations[preIndex].neighborTime.add(distance);
                 Info.stations[curIndex].neighborStation.add(Info.stations[preIndex]);
                 Info.stations[curIndex].neighborTime.add(distance);
-
                 //更新信息
                 preMin = curMin;
                 preIndex = curIndex;
