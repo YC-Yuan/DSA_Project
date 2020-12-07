@@ -22,6 +22,15 @@ public class Info {
     public static int multiChange;
     public static String multiStr;
 
+    public static void init(){
+        map = new HashMap<>();
+        stations = new Station[mapSize];
+        timeTable = new int[mapSize][mapSize];
+        changeTable = new int[mapSize][mapSize];
+        pathTable = new Path[mapSize][mapSize];
+        strTable = new String[mapSize][mapSize];
+    }
+
 
     public static void query(String multiName) {
         String[] stationNames =Util.splitByTokenizer(multiName);

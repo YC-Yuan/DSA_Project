@@ -29,7 +29,7 @@ public class Dijkstra {
         while (!queue.isEmpty()) {
             do {
                 current = queue.poll();
-            } while (Objects.requireNonNull(current).isConsidered);
+            } while (current.isConsidered);
             current.isConsidered = true;
 
             //对于正在考虑的节点：

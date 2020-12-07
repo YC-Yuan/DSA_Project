@@ -8,6 +8,8 @@ public class TxtRead {
     }
 
     public static void read() throws IOException {
+
+
         String preName, curName;
         int preMin, curMin;
         int index = 0;//该站点总标号

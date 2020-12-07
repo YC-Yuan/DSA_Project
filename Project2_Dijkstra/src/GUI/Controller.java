@@ -18,9 +18,15 @@ public class Controller {
 
     public static StringBuilder outputInfo = new StringBuilder();
 
-    public void clickQuery(ActionEvent actionEvent) {
+    public void clickQuery(ActionEvent actionEvent) throws IOException {
         ShowTime showTime=new ShowTime();
         outputInfo=new StringBuilder();
+
+        //PoiRead.readExcel();
+        //JxlRead.readExcel();
+        Info.init();
+        TxtRead.read();
+
         String multiName=input.getText();
         String[] stationNames = Util.splitByTokenizer(multiName);
         int start;
@@ -29,7 +35,6 @@ public class Controller {
         int change = 0;
         StringBuilder str = new StringBuilder();
         for (int i = 0; i < stationNames.length - 1; i++) {//两站两站寻找
-
             //需要获知，是否为合法输入
             Integer save=Info.map.get(stationNames[i]);
             if (save!=null) start= save;
@@ -78,6 +83,7 @@ public class Controller {
     }
 
     public void clickTest(ActionEvent actionEvent) throws IOException {
+
         outputInfo=new StringBuilder();
         ShowTime showTime = new ShowTime();
 
@@ -87,6 +93,7 @@ public class Controller {
 
         //PoiRead.readExcel();
         //JxlRead.readExcel();
+        Info.init();
         TxtRead.read();
 
         String input;
