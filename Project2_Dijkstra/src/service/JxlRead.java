@@ -7,11 +7,7 @@ import jxl.read.biff.BiffException;
 import java.io.*;
 
 public class JxlRead {
-    public static void main(String[] args) throws IOException, BiffException {
-        ShowTime showTime = new ShowTime();
-        readExcel();
-        showTime.printTime("read cost:");
-    }
+    //这个类采用Jxl包读取文件，速度中等
 
     public static void readExcel() throws IOException, BiffException {
         File file = new File("info\\Timetable.xls");

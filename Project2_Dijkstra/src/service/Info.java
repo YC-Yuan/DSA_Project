@@ -14,23 +14,13 @@ public class Info {
     public static String[][] strTable = new String[mapSize][mapSize];
 
     public static Path infoPath;
-    public static String infoStr;
+    public static int infoLoadTime;
     public static int infoDistance;
     public static int infoChange;
 
     public static int multiTime;
     public static int multiChange;
     public static String multiStr;
-
-    public static void init(){
-        map = new HashMap<>();
-        stations = new Station[mapSize];
-        timeTable = new int[mapSize][mapSize];
-        changeTable = new int[mapSize][mapSize];
-        pathTable = new Path[mapSize][mapSize];
-        strTable = new String[mapSize][mapSize];
-    }
-
 
     public static void query(String multiName) {
         String[] stationNames =Util.splitByTokenizer(multiName);
@@ -63,10 +53,6 @@ public class Info {
                 change += infoChange;
                 str.append(infoPath.toStringBuilder()).append("|");
             }
-            /*Dijkstra.run(start,end);
-            time+=infoDistance;
-            change+=infoChange;
-            str.append(infoPath);*/
         }
         multiStr = str.toString();
         multiTime = time;

@@ -22,9 +22,6 @@ public class Controller {
         ShowTime showTime=new ShowTime();
         outputInfo=new StringBuilder();
 
-        //PoiRead.readExcel();
-        //JxlRead.readExcel();
-        Info.init();
         TxtRead.read();
 
         String multiName=input.getText();
@@ -77,7 +74,7 @@ public class Controller {
         multiTime = time;
         multiChange = change;
         outputInfo.append("路线：").append(Info.multiStr).append("\n").append("用时：").append(Info.multiTime).append("  换乘数：").append(Info.multiChange).append("\n");
-        outputInfo.append(showTime.getPrintTime("运行总耗时："));
+        outputInfo.append(showTime.getPrintTime("运行总耗时：")).append("  加载地图耗时：").append(infoLoadTime).append("mills");
 
         output.setText(outputInfo.toString());
     }
@@ -91,9 +88,6 @@ public class Controller {
         FileInputStream fileInputStream = new FileInputStream(file);
         BufferedReader br = new BufferedReader(new InputStreamReader(fileInputStream));
 
-        //PoiRead.readExcel();
-        //JxlRead.readExcel();
-        Info.init();
         TxtRead.read();
 
         String input;
@@ -102,7 +96,7 @@ public class Controller {
             outputInfo.append("路线：").append(Info.multiStr).append("\n");
             outputInfo.append("用时：").append(Info.multiTime).append("  换乘数：").append(Info.multiChange).append("\n");
         }
-        outputInfo.append(showTime.getPrintTime("运行总耗时："));
+        outputInfo.append(showTime.getPrintTime("运行总耗时：")).append("  加载地图耗时：").append(infoLoadTime).append("mills");
 
         output.setText(outputInfo.toString());
     }

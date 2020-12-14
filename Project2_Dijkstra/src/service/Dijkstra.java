@@ -13,6 +13,7 @@ public class Dijkstra {
         ) {
             station.distance = 1000000;
             station.isConsidered = false;
+            station.path=new Vector<>();
             //path完全在运算时获取，无需init
         }
         Info.stations[startIndex].path = new Vector<>();
@@ -26,12 +27,11 @@ public class Dijkstra {
         queue.add(Info.stations[startIndex]);
         Station current, neighbor;
 
-        while (!queue.isEmpty()) {
+        for (int turn=0;turn<324;turn++){
             do {
                 current = queue.poll();
-            } while (current.isConsidered);
+            } while (Objects.requireNonNull(current).isConsidered);
             current.isConsidered = true;
-
             //对于正在考虑的节点：
             //1.对所有相邻节点做更新
             for (int i = 0; i < current.neighborStation.size(); i++) {//对所有邻居

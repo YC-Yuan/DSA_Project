@@ -7,6 +7,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.*;
 
 public class PoiRead {
+    //这个类用Poi包读取文件，速度慢
+
     public static void readExcel() throws IOException {
         File file = new File("info\\Timetable.xlsx");
         InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
