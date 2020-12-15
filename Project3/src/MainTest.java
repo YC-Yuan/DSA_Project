@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class Main {
+public class MainTest {
 
     public static TreeMap<String,Long> map = new TreeMap<>();
 
@@ -96,53 +96,34 @@ public class Main {
                     }
                     break;
                 case "ADDCONTAIN":
+                    //暴力方法
                     index = content.indexOf(" ");
                     key = content.substring(0,index++);
-                    value = Long.parseLong(content.substring(index));
-                    keySet = acAuto.getKeySet(key);
-                    for (String aKey : keySet) {
-                        map.replace(aKey,value + map.get(aKey));
-                    }
-                    //暴力方法
-                    /*index = content.indexOf(" ");
-                    key = content.substring(0, index++);
                     for (String aKey : map.keySet()
                     ) {
                         if (aKey.contains(key)) {
                             value = Long.parseLong(content.substring(index));
                             value += map.get(aKey);
-                            map.replace(aKey, value);
+                            map.replace(aKey,value);
                         }
-                    }*/
+                    }
                     break;
                 case "QUERYCONTAIN":
-                    keySet = acAuto.getKeySet(content);
-                    long sumContain = 0;
-                    for (String aKey : keySet) {
-                        sumContain += map.get(aKey);
-                    }
-                    System.out.println(sumContain);
                     //暴力方法
-                    /*long sumContain = 0;
+                    long sumContain = 0;
                     for (String aKey : map.keySet()
                     ) {
                         if (aKey.contains(content)) {
                             sumContain += map.get(aKey);
                         }
                     }
-                    System.out.println(sumContain);*/
+                    System.out.println(sumContain);
                     break;
                 case "DELCONTAIN":
-                    keySet = acAuto.getKeySet(content);
-                    for (String aKey : keySet) {
-                        map.replace(aKey,0L);
-                    }
                     //暴力方法
-                    /*
                     for (String aKey : map.keySet()) {
-                        if (aKey.contains(content)) map.replace(aKey, 0L);
+                        if (aKey.contains(content)) map.replace(aKey,0L);
                     }
-                    */
                     break;
             }
         }
