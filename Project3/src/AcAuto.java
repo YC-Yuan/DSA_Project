@@ -4,12 +4,12 @@ import java.util.Map.Entry;
 public class AcAuto {
     //字符中类，26个字母
     private static final int NUM = 26;
-    private final Node root=new Node();
+    private final Node root = new Node('A');
 
-    public HashSet<String> getKeySet(String targetStr){
-        Node target=root;
-        for (int i=0;i<targetStr.length();i++){
-            target=target.next[getIndexOfChar(targetStr.charAt(i))];
+    public HashSet<String> getKeySet(String targetStr) {
+        Node target = root;
+        for (int i = 0; i < targetStr.length(); i++) {
+            target = target.next[getIndexOfChar(targetStr.charAt(i))];
         }
         return target.keys;
     }
@@ -18,11 +18,31 @@ public class AcAuto {
     private static class Node {
         Node fail;//自动机fail指针
         Node[] next = new Node[NUM];//孩子们
-        HashSet<String> keys=new HashSet<>();//对应的查找结果
+        char c = 0;
+        Node parent = null;
+        HashSet<String> keys = new HashSet<>();//对应的查找结果
+
+        Node(char c) {
+            this.c = c;
+        }
     }
 
-    private int getIndexOfChar(char c) {
+    public String getContent(Node node) {
+        if (node == root) return "ROOT";
+        StringBuilder str = new StringBuilder();
+        while (node != root) {
+            str.insert(0, node.c);
+            node = node.parent;
+        }
+        return str.toString();
+    }
+
+    private static int getIndexOfChar(char c) {
         return c - 97;
+    }
+
+    private static char getCharOfIndex(int index) {
+        return (char) (index + 97);
     }
 
 
@@ -32,7 +52,8 @@ public class AcAuto {
         for (int i = 0; i < targetStr.length(); i++) {
             int index = getIndexOfChar(targetStr.charAt(i));
             if (curr.next[index] == null) {
-                curr.next[index] = new Node();
+                curr.next[index] = new Node(getCharOfIndex(index));
+                curr.next[index].parent = curr;
             }
             curr = curr.next[index];
         }
@@ -50,26 +71,20 @@ public class AcAuto {
             }
         }
         while (!queue.isEmpty()) {
-            /*确定出列结点的所有孩子结点的fail的指向*/
-            Node p = queue.removeFirst();
+            Node p = queue.removeFirst();//p为考虑的父对象
             for (int i = 0; i < NUM; i++) {
                 if (p.next[i] != null) {
-                    /*孩子结点入列*/
-                    queue.addLast(p.next[i]);
-                    /*从p.fail开始找起*/
-                    Node failTo = p.fail;
+                    queue.addLast(p.next[i]);//把p的孩子们加入，之后换成p，实际上需要添加fail指针的是p的孩子
+                    Node failTo = p.fail;//从p的fail往下找，对第一层来说就是root
                     while (true) {
-                        /*说明找到了根结点还没有找到*/
-                        if (failTo == null) {
+                        if (failTo == null) {//如果爬到了根节点，用了根节点的failTo才会为空
                             p.next[i].fail = root;
                             break;
                         }
-                        /*说明有公共前缀*/
-                        if (failTo.next[i] != null) {
+                        if (failTo.next[i] != null) {//在父亲之fail的孩子中发现了这个节点，则设置fail
                             p.next[i].fail = failTo.next[i];
                             break;
-                        } else {
-                            /*继续向上寻找*/
+                        } else {//
                             failTo = failTo.fail;
                         }
                     }
@@ -80,47 +95,27 @@ public class AcAuto {
 
     /*自动机已构建完毕，输入帖子key值*/
     public void putIntoSet(String key) {
+        //更改此节点set
         Node curr = root;
         int i = 0;
         while (i < key.length()) {
-            /*文本串中的字符*/
             int index = getIndexOfChar(key.charAt(i));
-            /*文本串中的字符和AC自动机中的字符进行比较*/
-            if (curr.next[index] != null) {
-                /*若相等，自动机进入下一状态*/
+            if (curr.next[index] != null) {//可以爬，则向前爬并设置set
                 curr = curr.next[index];
-                //更改此节点set
-                curr.keys.add(key);
                 i++;
-            } else {
-                /*若不等，找到下一个应该比较的状态*/
+                curr.keys.add(key);
+            } else {//错了，不能爬，回溯fail指针
                 curr = curr.fail;
+                if (curr != null) {//对非root设置set
+                    curr.keys.add(key);
+                }
                 /*到根结点还未找到，说明文本串中以ch作为结束的字符片段不是任何目标字符串的前缀，
                  * 状态机重置，比较下一个字符*/
-                if (curr == null) {
+                else {
                     curr = root;
                     i++;
                 }
             }
         }
-    }
-
-    public static void main(String[] args) {
-        AcAuto acAuto = new AcAuto();
-
-        //需要查询的contain输入
-        acAuto.buildTrieTree("fd");
-
-        //fail指针构建
-        acAuto.buildFail();
-
-        //需要放入的帖子key
-        acAuto.putIntoSet("hellofdu");
-        acAuto.putIntoSet("hellozhangjiang");
-        acAuto.putIntoSet("beautifulfdu");
-
-        //查询contain中字符串
-        System.out.println(Arrays.toString(acAuto.getKeySet("fd").toArray()));
-
     }
 }
