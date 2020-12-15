@@ -1,3 +1,5 @@
+import com.sun.scenario.animation.shared.ClipEnvelope;
+
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -24,6 +26,7 @@ public class AcAuto {
 
         Node(char c) {
             this.c = c;
+            if (c == 'A') this.fail = null;//root指向fail
         }
     }
 
@@ -47,7 +50,7 @@ public class AcAuto {
 
 
     /*由目标字符串构建Trie树*/
-    private void buildTrieTree(String targetStr) {
+    void buildTrieTree(String targetStr) {
         Node curr = root;
         for (int i = 0; i < targetStr.length(); i++) {
             int index = getIndexOfChar(targetStr.charAt(i));
@@ -60,7 +63,7 @@ public class AcAuto {
     }
 
     /*由Trie树构建AC自动机，本质是一个自动机，相当于构建KMP算法的next数组*/
-    private void buildFail() {
+    void buildFail() {
         LinkedList<Node> queue = new LinkedList<Node>();
         for (Node x : root.next) {
             if (x != null) {
@@ -95,6 +98,10 @@ public class AcAuto {
 
     /*自动机已构建完毕，输入帖子key值*/
     public void putIntoSet(String key) {
+        /*String detectString = "wipgdtkhwatajeekc";
+        if (key.equals(detectString)) {
+            System.out.println("putting the key:" + key);
+        }*/
         //更改此节点set
         Node curr = root;
         int i = 0;
@@ -103,19 +110,29 @@ public class AcAuto {
             if (curr.next[index] != null) {//可以爬，则向前爬并设置set
                 curr = curr.next[index];
                 i++;
-                curr.keys.add(key);
+                if (curr != root) {
+                    curr.keys.add(key);
+                    //if (key.equals(detectString)) System.out.println(getContent(curr));
+                }
             } else {//错了，不能爬，回溯fail指针
                 curr = curr.fail;
-                if (curr != null) {//对非root设置set
+                if (curr.c != 'A') {//对非root设置set
                     curr.keys.add(key);
-                }
-                /*到根结点还未找到，说明文本串中以ch作为结束的字符片段不是任何目标字符串的前缀，
-                 * 状态机重置，比较下一个字符*/
-                else {
-                    curr = root;
+                    //if (key.equals(detectString)) System.out.println(getContent(curr));
+                } /*else {
+                    curr=root;
                     i++;
-                }
+                 }*/
             }
+        }
+        //遇到末尾为连续串时，将跳出循环而漏过fail指向的字串
+        if (curr.c != 'A') {
+            curr = curr.fail;
+        }
+        while (curr.c != 'A') {
+            curr.keys.add(key);
+            //if (key.equals(detectString)) System.out.println(getContent(curr));
+            curr = curr.fail;
         }
     }
 }

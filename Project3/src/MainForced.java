@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class MainTest {
+public class MainForced {
 
     public static TreeMap<String,Long> map = new TreeMap<>();
 
@@ -108,7 +108,13 @@ public class MainTest {
                 case "DELCONTAIN":
                     //暴力方法
                     for (String aKey : map.keySet()) {
-                        if (aKey.contains(content)) map.replace(aKey,0L);
+                        if (aKey.contains(content)) {
+                            /*if (aKey.equals("wipgdtkhwatajeekc")){
+                                System.out.println("DELCONTAIN:" + content);
+                                System.out.println("deleted here!");
+                            }*/
+                            map.replace(aKey,0L);
+                        }
                     }
                     break;
             }
