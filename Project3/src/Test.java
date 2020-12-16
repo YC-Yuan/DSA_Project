@@ -4,7 +4,7 @@ public class Test {
     public static ArrayList<java.lang.String> keys=new ArrayList<>();
 
     public static void main(String[]args){
-        final int length=1000;
+        final int length=10000;
         StringBuilder sb=new StringBuilder();
         sb.append(length).append("\n");
         for (int i=0;i<length;i++){

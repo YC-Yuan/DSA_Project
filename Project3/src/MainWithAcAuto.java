@@ -2,7 +2,7 @@ import java.util.*;
 
 public class MainWithAcAuto {
 
-    public static TreeMap<String, Long> map = new TreeMap<>();
+    public static TreeMap<String,Long> map = new TreeMap<>();
 
 
     public static void main(String[] args) {
@@ -15,7 +15,7 @@ public class MainWithAcAuto {
         String key;
         long value;
         int index;
-        SortedMap<String, Long> sortedMap;
+        SortedMap<String,Long> sortedMap;
         HashSet<String> keySet;
 
         String number = cin.nextLine();
@@ -24,30 +24,128 @@ public class MainWithAcAuto {
         //存储输入和自动机
         String[] inputStrings = new String[num];
         AcAuto acAuto = new AcAuto();
+        //或者改成分散式储存？
+        Byte[] methodIndexes = new Byte[num];
+        String[] keys = new String[num];
+        long[] addValues = new long[num];
+        byte methodIndex;
 
         //读入阶段，存入queue并构建自动机
         for (int i = 0; i < num; i++) {
             //存放
             input = cin.nextLine();
-            inputStrings[i] = input;
-            //如果是CONTAIN Key则需要构建自动机
-            if (input.indexOf('C') != -1) {//说明是CONTAIN
-                if (input.charAt(0) == 'A') {//参数为Key，Value
-                    acAuto.buildTrieTree(input.substring(input.indexOf(' ') + 1, input.lastIndexOf(' ')));
-                } else {//参数为Key
-                    acAuto.buildTrieTree(input.substring(input.lastIndexOf(' ') + 1));
-                }
+            //inputStrings[i] = input;
+            //分别处理input
+
+            index = input.indexOf(' ');
+            method = input.substring(0,index++);
+            content = input.substring(index);
+
+            methodIndex = getMethodIndex(method);
+            methodIndexes[i] = methodIndex;
+
+            switch (methodIndex) {
+                case 0://P
+                case 1://A
+                case 4://AB
+                    index = content.indexOf(' ');
+                    key = content.substring(0,index++);
+                    value = Long.parseLong(content.substring(index));
+                    keys[i] = key;
+                    addValues[i] = value;
+                    break;
+                case 2://Q
+                case 3://D
+                case 5://QB
+                case 6://DB
+                    keys[i] = content;
+                    break;
+                case 7://AC
+                    index = content.indexOf(' ');
+                    key = content.substring(0,index++);
+                    value = Long.parseLong(content.substring(index));
+                    keys[i] = key;
+                    addValues[i] = value;
+                    acAuto.buildTrieTree(key);//构建key
+                    break;
+                case 8://QC
+                case 9://DC
+                    keys[i] = content;
+                    acAuto.buildTrieTree(content);//构建key
+                    break;
             }
         }
 
         acAuto.buildFail();
 
         for (int i = 0; i < num; i++) {//自动机构建完毕，取用存储的命令
-            input = inputStrings[i];
+            /*input = inputStrings[i];
             index = input.indexOf(' ');
             method = input.substring(0, index++);
-            content = input.substring(index);
-            switch (method) {
+            content = input.substring(index);*/
+            methodIndex = methodIndexes[i];
+            key = keys[i];
+            value = addValues[i];
+            switch (methodIndex) {
+                case 0:
+                    acAuto.putIntoSet(key);
+                    map.put(key,value);
+                    break;
+                case 1:
+                    value += map.get(key);
+                    map.replace(key,value);
+                    break;
+                case 2:
+                    System.out.println(map.get(key));
+                    break;
+                case 3:
+                    map.replace(key,0L);
+                    break;
+                case 4:
+                    sortedMap = getSortedMap(key);
+                    for (String aKey : sortedMap.keySet()
+                    ) {
+                        map.replace(aKey,map.get(aKey) + value);
+                    }
+                    break;
+                case 5:
+                    sortedMap = getSortedMap(key);
+                    long sum = 0;
+                    for (String aKey : sortedMap.keySet()
+                    ) {
+                        sum += map.get(aKey);
+                    }
+                    System.out.println(sum);
+                    break;
+                case 6:
+                    sortedMap = getSortedMap(key);
+                    for (String aKey : sortedMap.keySet()
+                    ) {
+                        map.replace(aKey,0L);
+                    }
+                    break;
+                case 7:
+                    keySet = acAuto.getKeySet(key);
+                    for (String aKey : keySet) {
+                        map.replace(aKey,value + map.get(aKey));
+                    }
+                    break;
+                case 8:
+                    keySet = acAuto.getKeySet(key);
+                    long sumContain = 0;
+                    for (String aKey : keySet) {
+                        sumContain += map.get(aKey);
+                    }
+                    System.out.println(sumContain);
+                    break;
+                case 9:
+                    keySet = acAuto.getKeySet(key);
+                    for (String aKey : keySet) {
+                        map.replace(aKey,0L);
+                    }
+                    break;
+            }
+            /*switch (method) {
                 case "PUT":
                     index = content.indexOf(' ');
                     key = content.substring(0, index++);
@@ -81,10 +179,8 @@ public class MainWithAcAuto {
                 case "QUERYBEGINWITH":
                     sortedMap = getSortedMap(content);
                     long sum = 0;
-//                    System.out.println("queryBegin:" + content);
                     for (String aKey : sortedMap.keySet()
                     ) {
-//                        System.out.println("aKey = " + aKey + " num:" + map.get(aKey));
                         sum += map.get(aKey);
                     }
                     System.out.println(sum);
@@ -108,9 +204,7 @@ public class MainWithAcAuto {
                 case "QUERYCONTAIN":
                     keySet = acAuto.getKeySet(content);
                     long sumContain = 0;
-                    //System.out.println("queryContain:" + content);
                     for (String aKey : keySet) {
-                        //System.out.println("aKey = " + aKey + " num:" + map.get(aKey));
                         sumContain += map.get(aKey);
                     }
                     System.out.println(sumContain);
@@ -121,13 +215,39 @@ public class MainWithAcAuto {
                         map.replace(aKey, 0L);
                     }
                     break;
-            }
+            }*/
         }
-        //System.out.println(Arrays.toString(acAuto.getKeySet("om").toArray()));
+    }
+
+    public static byte getMethodIndex(String str) {
+        switch (str) {
+            case "PUT":
+                return 0;
+            case "ADD":
+                return 1;
+            case "QUERY":
+                return 2;
+            case "DEL":
+                return 3;
+            case "ADDBEGINWITH":
+                return 4;
+            case "QUERYBEGINWITH":
+                return 5;
+            case "DELBEGINWITH":
+                return 6;
+            case "ADDCONTAIN":
+                return 7;
+            case "QUERYCONTAIN":
+                return 8;
+            case "DELCONTAIN":
+                return 9;
+            default:
+                return 88;
+        }
     }
 
 
-    public static SortedMap<String, Long> getSortedMap(String key) {
-        return map.subMap(key, key.substring(0, key.length() - 1) + (char) (key.charAt(key.length() - 1) + 1));
+    public static SortedMap<String,Long> getSortedMap(String key) {
+        return map.subMap(key,key.substring(0,key.length() - 1) + (char) (key.charAt(key.length() - 1) + 1));
     }
 }
