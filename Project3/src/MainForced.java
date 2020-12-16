@@ -7,7 +7,6 @@ public class MainForced {
 
     public static void main(String[] args) throws IOException {
 
-        //Scanner cin = new Scanner(System.in);
         File inFile = new File("src/test.txt");
         BufferedReader reader = new BufferedReader(new FileReader(inFile));
 
@@ -23,9 +22,7 @@ public class MainForced {
         SortedMap<String,Long> sortedMap;
         HashSet<String> keySet;
 
-        //String number = cin.nextLine();
         String number = reader.readLine();
-
         int num = Integer.parseInt(number);
 
         //存储输入和自动机

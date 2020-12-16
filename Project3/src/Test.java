@@ -7,7 +7,7 @@ public class Test {
     public static ArrayList<String> keys=new ArrayList<>();
 
     public static void main(String[]args) throws IOException {
-        final int length=200000;
+        final int length=500000;
         StringBuilder sb=new StringBuilder();
         sb.append(length).append("\n");
         for (int i=0;i<length;i++){
