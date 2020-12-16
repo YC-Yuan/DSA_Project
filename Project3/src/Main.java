@@ -91,7 +91,6 @@ public class Main {
             switch (methodIndex) {
                 case 0:
                     for (String subString : acAuto.getSubStrings(key)) {
-                        System.out.println(subString);
                         table.get(subString).add(key);
                     }
                     map.put(key,value);
@@ -270,6 +269,10 @@ public class Main {
             Node(String content) {
                 this.content = content;
             }
+
+            public boolean isWord() {
+                return content != null;
+            }
         }
 
         private static int getIndexOfChar(char c) {
@@ -279,14 +282,16 @@ public class Main {
         /*由目标字符串构建Trie树*/
         void buildTrieTree(String targetStr) {
             Node curr = root;
-            StringBuilder content = new StringBuilder();
-            for (int i = 0; i < targetStr.length(); i++) {
-                content.append(targetStr.charAt(i));
+            for (int i = 0; i < targetStr.length() - 1; i++) {
                 int index = getIndexOfChar(targetStr.charAt(i));
                 if (curr.next[index] == null) {
-                    curr.next[index] = new Node(content.toString());
+                    curr.next[index] = new Node(null);
                 }
                 curr = curr.next[index];
+            }
+            int index = getIndexOfChar(targetStr.charAt(targetStr.length() - 1));
+            if (curr.next[index] == null) {
+                curr.next[index] = new Node(targetStr);
             }
         }
 
@@ -325,8 +330,8 @@ public class Main {
             }
         }
 
-        public String[] getSubStrings(String key) {
-            ArrayList<String> list = new ArrayList<>();
+        public HashSet<String> getSubStrings(String key) {
+            HashSet<String> set = new HashSet<>();
             Node curr = root;
             int i = 0;
             while (i < key.length()) {
@@ -334,18 +339,19 @@ public class Main {
                 if (curr.next[index] != null) {//可以爬，则向前爬并设置set
                     curr = curr.next[index];
                     i++;
-                    if (curr != root) {
-                        list.add(curr.content);
+                    if (curr.isWord()) {
+                        set.add(curr.content);
                     }
                 }
                 else {//错了，不能爬，回溯fail指针
                     //如果在root出错，则不回溯直接+1
-                    if (curr.content==null){
+                    if (curr == root) {
                         i++;
-                    }else {
+                    }
+                    else {
                         curr = curr.fail;
-                        if (curr.content != null) {//如果爬到的目标不是root，则加入
-                            list.add(curr.content);
+                        if (curr.isWord()) {//如果爬到的目标是子串，则加入
+                            set.add(curr.content);
                         }
                     }
                 }
@@ -355,10 +361,10 @@ public class Main {
                 curr = curr.fail;
             }
             while (curr.content != null) {
-                list.add(curr.content);
+                set.add(curr.content);
                 curr = curr.fail;
             }
-            return list.toArray(new String[0]);
+            return set;
         }
     }
 }

@@ -28,6 +28,7 @@ public class AcAuto {
             this.c = c;
             if (c == 'A') this.fail = null;//root指向fail
         }
+
     }
 
     public String getContent(Node node) {
