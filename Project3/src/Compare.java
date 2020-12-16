@@ -3,6 +3,13 @@ import java.nio.Buffer;
 
 public class Compare {
     public static void main(String[] args) throws IOException {
+        Test.main(args);
+        MainForced.main(args);
+        MainWithAcAuto.main(args);
+        compare();
+    }
+
+    public static void compare() throws IOException {
         File file1 = new File("src/compare1.txt");
         File file2 = new File("src/compare2.txt");
 

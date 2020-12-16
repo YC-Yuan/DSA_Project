@@ -2,7 +2,7 @@ import java.util.*;
 
 public class Main {
 
-    public static TreeMap<String, Long> map = new TreeMap<>();
+    public static TreeMap<String,Long> map = new TreeMap<>();
 
 
     public static void main(String[] args) {
@@ -15,14 +15,14 @@ public class Main {
         String key;
         long value;
         int index;
-        SortedMap<String, Long> sortedMap;
+        SortedMap<String,Long> sortedMap;
         HashSet<String> keySet;
 
-        String number = cin.nextLine();
-        int num = Integer.parseInt(number);
+        int num = cin.nextInt();
+        cin.nextLine();
 
         //存储输入和自动机
-        String[] inputStrings = new String[num];
+        HashMap<String,HashSet<String>> table = new HashMap<>();//存储子串→对应键的关系
         AcAuto acAuto = new AcAuto();
         //或者改成分散式储存？
         Byte[] methodIndexes = new Byte[num];
@@ -38,7 +38,7 @@ public class Main {
             //分别处理input
 
             index = input.indexOf(' ');
-            method = input.substring(0, index++);
+            method = input.substring(0,index++);
             content = input.substring(index);
 
             methodIndex = getMethodIndex(method);
@@ -49,7 +49,7 @@ public class Main {
                 case 1://A
                 case 4://AB
                     index = content.indexOf(' ');
-                    key = content.substring(0, index++);
+                    key = content.substring(0,index++);
                     value = Long.parseLong(content.substring(index));
                     keys[i] = key;
                     addValues[i] = value;
@@ -62,15 +62,17 @@ public class Main {
                     break;
                 case 7://AC
                     index = content.indexOf(' ');
-                    key = content.substring(0, index++);
+                    key = content.substring(0,index++);
                     value = Long.parseLong(content.substring(index));
                     keys[i] = key;
                     addValues[i] = value;
                     acAuto.buildTrieTree(key);//构建key
+                    table.put(key,new HashSet<>());
                     break;
                 case 8://QC
                 case 9://DC
                     keys[i] = content;
+                    table.put(content,new HashSet<>());
                     acAuto.buildTrieTree(content);//构建key
                     break;
             }
@@ -88,24 +90,27 @@ public class Main {
             value = addValues[i];
             switch (methodIndex) {
                 case 0:
-                    acAuto.putIntoSet(key);
-                    map.put(key, value);
+                    for (String subString : acAuto.getSubStrings(key)) {
+                        System.out.println(subString);
+                        table.get(subString).add(key);
+                    }
+                    map.put(key,value);
                     break;
                 case 1:
                     value += map.get(key);
-                    map.replace(key, value);
+                    map.replace(key,value);
                     break;
                 case 2:
                     System.out.println(map.get(key));
                     break;
                 case 3:
-                    map.replace(key, 0L);
+                    map.replace(key,0L);
                     break;
                 case 4:
                     sortedMap = getSortedMap(key);
                     for (String aKey : sortedMap.keySet()
                     ) {
-                        map.replace(aKey, map.get(aKey) + value);
+                        map.replace(aKey,map.get(aKey) + value);
                     }
                     break;
                 case 5:
@@ -121,17 +126,17 @@ public class Main {
                     sortedMap = getSortedMap(key);
                     for (String aKey : sortedMap.keySet()
                     ) {
-                        map.replace(aKey, 0L);
+                        map.replace(aKey,0L);
                     }
                     break;
                 case 7:
-                    keySet = acAuto.getKeySet(key);
+                    keySet = table.get(key);
                     for (String aKey : keySet) {
-                        map.replace(aKey, value + map.get(aKey));
+                        map.replace(aKey,value + map.get(aKey));
                     }
                     break;
                 case 8:
-                    keySet = acAuto.getKeySet(key);
+                    keySet = table.get(key);
                     long sumContain = 0;
                     for (String aKey : keySet) {
                         sumContain += map.get(aKey);
@@ -139,9 +144,9 @@ public class Main {
                     System.out.println(sumContain);
                     break;
                 case 9:
-                    keySet = acAuto.getKeySet(key);
+                    keySet = table.get(key);
                     for (String aKey : keySet) {
-                        map.replace(aKey, 0L);
+                        map.replace(aKey,0L);
                     }
                     break;
             }
@@ -247,33 +252,23 @@ public class Main {
     }
 
 
-    public static SortedMap<String, Long> getSortedMap(String key) {
-        return map.subMap(key, key.substring(0, key.length() - 1) + (char) (key.charAt(key.length() - 1) + 1));
+    public static SortedMap<String,Long> getSortedMap(String key) {
+        return map.subMap(key,key.substring(0,key.length() - 1) + (char) (key.charAt(key.length() - 1) + 1));
     }
 
     public static class AcAuto {
         //字符中类，26个字母
         private static final int NUM = 26;
-        private final Node root = new Node('A');
-
-        public HashSet<String> getKeySet(String targetStr) {
-            Node target = root;
-            for (int i = 0; i < targetStr.length(); i++) {
-                target = target.next[getIndexOfChar(targetStr.charAt(i))];
-            }
-            return target.keys;
-        }
+        private final Node root = new Node(null);
 
         /*内部静态类，用于表示AC自动机的每个结点，在每个结点中我们并没有存储该结点对应的字符*/
         private static class Node {
             Node fail;//自动机fail指针
             Node[] next = new Node[NUM];//孩子们
-            char c = 0;
-            HashSet<String> keys = new HashSet<>();//对应的查找结果
+            String content;
 
-            Node(char c) {
-                this.c = c;
-                if (c == 'A') this.fail = null;//root指向fail
+            Node(String content) {
+                this.content = content;
             }
         }
 
@@ -281,18 +276,15 @@ public class Main {
             return c - 97;
         }
 
-        private static char getCharOfIndex(int index) {
-            return (char) (index + 97);
-        }
-
-
         /*由目标字符串构建Trie树*/
         void buildTrieTree(String targetStr) {
             Node curr = root;
+            StringBuilder content = new StringBuilder();
             for (int i = 0; i < targetStr.length(); i++) {
+                content.append(targetStr.charAt(i));
                 int index = getIndexOfChar(targetStr.charAt(i));
                 if (curr.next[index] == null) {
-                    curr.next[index] = new Node(getCharOfIndex(index));
+                    curr.next[index] = new Node(content.toString());
                 }
                 curr = curr.next[index];
             }
@@ -323,7 +315,8 @@ public class Main {
                             if (failTo.next[i] != null) {//在父亲之fail的孩子中发现了这个节点，则设置fail
                                 p.next[i].fail = failTo.next[i];
                                 break;
-                            } else {//
+                            }
+                            else {//
                                 failTo = failTo.fail;
                             }
                         }
@@ -332,9 +325,8 @@ public class Main {
             }
         }
 
-        /*自动机已构建完毕，输入帖子key值*/
-        public void putIntoSet(String key) {
-            //更改此节点set
+        public String[] getSubStrings(String key) {
+            ArrayList<String> list = new ArrayList<>();
             Node curr = root;
             int i = 0;
             while (i < key.length()) {
@@ -343,23 +335,30 @@ public class Main {
                     curr = curr.next[index];
                     i++;
                     if (curr != root) {
-                        curr.keys.add(key);
+                        list.add(curr.content);
                     }
-                } else {//错了，不能爬，回溯fail指针
-                    curr = curr.fail;
-                    if (curr.c != 'A') {//对非root设置set
-                        curr.keys.add(key);
+                }
+                else {//错了，不能爬，回溯fail指针
+                    //如果在root出错，则不回溯直接+1
+                    if (curr.content==null){
+                        i++;
+                    }else {
+                        curr = curr.fail;
+                        if (curr.content != null) {//如果爬到的目标不是root，则加入
+                            list.add(curr.content);
+                        }
                     }
                 }
             }
             //遇到末尾为连续串时，将跳出循环而漏过fail指向的字串
-            if (curr.c != 'A') {
+            if (curr.content != null) {
                 curr = curr.fail;
             }
-            while (curr.c != 'A') {
-                curr.keys.add(key);
+            while (curr.content != null) {
+                list.add(curr.content);
                 curr = curr.fail;
             }
+            return list.toArray(new String[0]);
         }
     }
 }

@@ -1,16 +1,27 @@
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Test {
-    public static ArrayList<java.lang.String> keys=new ArrayList<>();
+    public static ArrayList<String> keys=new ArrayList<>();
 
-    public static void main(String[]args){
-        final int length=10000;
+    public static void main(String[]args) throws IOException {
+        final int length=200000;
         StringBuilder sb=new StringBuilder();
         sb.append(length).append("\n");
         for (int i=0;i<length;i++){
             sb.append(getOrder(getRandomInt(10)));
         }
-        System.out.println(sb.toString());
+
+        File file=new File("src/test.txt");
+        FileWriter writer=new FileWriter(file);
+
+        writer.write(sb.toString());
+        //System.out.println(sb.toString());
+
+        writer.flush();
+        writer.close();
     }
 
     public static int getRandomInt(int seed){
@@ -58,7 +69,7 @@ public class Test {
         return sb.toString();
     }
 
-    public static java.lang.String getRandomKey(int length){
+    public static String getRandomKey(int length){
         length++;
         StringBuilder stringBuilder=new StringBuilder();
         for (int i=0;i<length;i++){

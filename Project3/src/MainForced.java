@@ -1,12 +1,18 @@
+import java.io.*;
 import java.util.*;
 
 public class MainForced {
 
     public static TreeMap<String,Long> map = new TreeMap<>();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
-        Scanner cin = new Scanner(System.in);
+        //Scanner cin = new Scanner(System.in);
+        File inFile = new File("src/test.txt");
+        BufferedReader reader = new BufferedReader(new FileReader(inFile));
+
+        File file = new File("src/compare2.txt");
+        FileWriter writer = new FileWriter(file);
 
         //工具常量区
         String input;
@@ -17,7 +23,9 @@ public class MainForced {
         SortedMap<String,Long> sortedMap;
         HashSet<String> keySet;
 
-        String number = cin.nextLine();
+        //String number = cin.nextLine();
+        String number = reader.readLine();
+
         int num = Integer.parseInt(number);
 
         //存储输入和自动机
@@ -26,7 +34,8 @@ public class MainForced {
         //读入阶段
         for (int i = 0; i < num; i++) {
             //存放
-            input = cin.nextLine();
+            input=reader.readLine();
+//            input = cin.nextLine();
             inputStrings[i] = input;
         }
 
@@ -50,7 +59,8 @@ public class MainForced {
                     map.replace(key,value);
                     break;
                 case "QUERY":
-                    System.out.println(map.get(content));
+                    writer.write(map.get(content) + "\n");
+                    //System.out.println(map.get(content));
                     break;
                 case "DEL":
                     map.replace(content,0L);
@@ -72,7 +82,8 @@ public class MainForced {
                     ) {
                         sum += map.get(aKey);
                     }
-                    System.out.println(sum);
+                    //System.out.println(sum);
+                    writer.write(sum + "\n");
                     break;
                 case "DELBEGINWITH":
                     sortedMap = getSortedMap(content);
@@ -103,7 +114,8 @@ public class MainForced {
                             sumContain += map.get(aKey);
                         }
                     }
-                    System.out.println(sumContain);
+                    //System.out.println(sumContain);
+                    writer.write(sumContain + "\n");
                     break;
                 case "DELCONTAIN":
                     //暴力方法
@@ -119,6 +131,7 @@ public class MainForced {
                     break;
             }
         }
+        writer.flush();
     }
 
 

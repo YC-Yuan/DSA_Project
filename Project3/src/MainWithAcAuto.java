@@ -1,3 +1,5 @@
+import java.io.*;
+import java.nio.Buffer;
 import java.util.*;
 
 public class MainWithAcAuto {
@@ -5,9 +7,15 @@ public class MainWithAcAuto {
     public static TreeMap<String,Long> map = new TreeMap<>();
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
-        Scanner cin = new Scanner(System.in);
+        //Scanner cin = new Scanner(System.in);
+
+        File inFile = new File("src/test.txt");
+        BufferedReader reader = new BufferedReader(new FileReader(inFile));
+
+        File file=new File("src/compare1.txt");
+        FileWriter writer=new FileWriter(file);
 
         //工具常量区
         String input;
@@ -18,7 +26,9 @@ public class MainWithAcAuto {
         SortedMap<String,Long> sortedMap;
         HashSet<String> keySet;
 
-        String number = cin.nextLine();
+        //String number = cin.nextLine();
+        String number=reader.readLine();
+
         int num = Integer.parseInt(number);
 
         //存储输入和自动机
@@ -33,7 +43,8 @@ public class MainWithAcAuto {
         //读入阶段，存入queue并构建自动机
         for (int i = 0; i < num; i++) {
             //存放
-            input = cin.nextLine();
+            input=reader.readLine();
+            //input = cin.nextLine();
             //inputStrings[i] = input;
             //分别处理input
 
@@ -96,7 +107,8 @@ public class MainWithAcAuto {
                     map.replace(key,value);
                     break;
                 case 2:
-                    System.out.println(map.get(key));
+                    writer.write(map.get(key)+"\n");
+                    //System.out.println(map.get(key));
                     break;
                 case 3:
                     map.replace(key,0L);
@@ -115,7 +127,8 @@ public class MainWithAcAuto {
                     ) {
                         sum += map.get(aKey);
                     }
-                    System.out.println(sum);
+                    writer.write(sum+"\n");
+                    //System.out.println(sum);
                     break;
                 case 6:
                     sortedMap = getSortedMap(key);
@@ -136,7 +149,8 @@ public class MainWithAcAuto {
                     for (String aKey : keySet) {
                         sumContain += map.get(aKey);
                     }
-                    System.out.println(sumContain);
+                    //System.out.println(sumContain);
+                    writer.write(sumContain+"\n");
                     break;
                 case 9:
                     keySet = acAuto.getKeySet(key);
@@ -217,6 +231,7 @@ public class MainWithAcAuto {
                     break;
             }*/
         }
+        writer.flush();
     }
 
     public static byte getMethodIndex(String str) {
